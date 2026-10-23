@@ -220,6 +220,16 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
     scrollbar-width: none; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
   .st-key-chips-row div::-webkit-scrollbar { display: none; }
   .st-key-chips-row button { flex: none; white-space: nowrap; }
+  /* phones: less packed - welcome chips as a tidy 2-column grid, more air between sections */
+  .welcome { padding-top: 36px; }
+  .welcome p { line-height: 1.55; margin-bottom: 4px; }
+  .specs { margin-top: 26px; margin-bottom: 8px; }
+  .st-key-chips-wrap { margin-top: 18px; }
+  .st-key-chips-wrap [data-testid="stButtonGroup"] > div, .st-key-chips-wrap div[data-baseweb="button-group"] {
+    display: grid !important; grid-template-columns: 1fr 1fr; gap: 10px !important; }
+  .st-key-chips-wrap button { width: 100% !important; justify-content: center; padding: 10px 8px !important; min-height: 46px !important; }
+  .st-key-chips-wrap button p { font-size: 13px !important; white-space: normal; line-height: 1.25; }
+  [data-testid="stBottomBlockContainer"] { padding: 10px .9rem 20px !important; }
 }
 </style>""", unsafe_allow_html=True)
 
@@ -232,21 +242,9 @@ st.markdown(f"""<div class="topbar"><div class="inner">{LOGO}
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# ---------------- settings (top-right) ----------------
-with st.container(key="settings"):
-    with st.popover("Settings"):
-        choice = st.selectbox("AI brain", ["auto", "groq", "gemini", "ollama", "offline"], key="brain",
-                              help="auto = Groq if its key is set, else Gemini, else offline mode. "
-                                   "Only changes YOUR chat, not other people using the same link.")
-        read_aloud = st.toggle("Read answers aloud automatically", value=False,
-                               help="Uses the same natural voice as voice mode. On iPhone, tap Listen.")
-        st.caption("Crew: " + ", ".join(m["name"] for m in facts["team_members"]))
-        if st.button("Clear conversation", use_container_width=True):
-            st.session_state.messages = []
-            st.session_state.pending = []
-            st.rerun()
-# the brain choice belongs to THIS visitor's session only (never os.environ, which every visitor shares)
-bot = RocketBot(backend=None if choice == "auto" else choice)
+# ---------------- AI brain: always automatic (best available: Groq, then Gemini, then offline) ----------------
+read_aloud = False
+bot = RocketBot(backend=None)
 
 # ---------------- voice mode bridge (invisible; see voice_mode.py) ----------------
 # The water-drop button next to the chat box opens a full-screen, hands-free voice conversation.
