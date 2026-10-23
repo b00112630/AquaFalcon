@@ -1,0 +1,225 @@
+/* AquaFalcon voice mode - "launch pad at night" look: navy sky, a glowing water core, glass pills.
+   Brand colours from app.py: navy #1e3a8a, water-blue #38bdf8 / #7dd3fc, Inter. */
+#afv-launch { position: fixed; z-index: 999990; width: 44px; height: 44px; border-radius: 15px; border: none;
+  background: linear-gradient(145deg, #1e3a8a 0%, #2563eb 70%, #38bdf8 130%); color: #fff; display: none; align-items: center;
+  justify-content: center; cursor: pointer; padding: 0;
+  box-shadow: 0 4px 14px rgba(30,58,138,.32), inset 0 0 0 1px rgba(125,211,252,.35); transition: transform .15s ease, filter .15s ease; }
+#afv-launch:hover { filter: brightness(1.1); transform: translateY(-1px); }
+#afv-launch svg { width: 23px; height: 23px; }
+body.afv-has-launch [data-testid="stChatInput"] { margin-right: 54px; }
+
+#afv { --acc: #38bdf8; --acc2: #7dd3fc; --glass: rgba(20,44,110,.42); --line: rgba(125,211,252,.22);
+  position: fixed; inset: 0; z-index: 999999; color: #eaf4ff; display: none; overflow: hidden;
+  background: radial-gradient(120% 80% at 50% 0%, #142a6b 0%, #0b1a4a 45%, #060f30 100%);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; -webkit-font-smoothing: antialiased;
+  padding: max(12px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); box-sizing: border-box;
+  flex-direction: column; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+#afv.open { display: flex; animation: afv-in .35s ease; }
+@keyframes afv-in { from { opacity: 0; transform: scale(1.02); } to { opacity: 1; transform: none; } }
+#afv * { box-sizing: border-box; }
+#afv > *:not(.afv-sky) { position: relative; z-index: 1; }
+
+/* night sky: two star layers that twinkle out of step + a faint horizon glow over the launch site */
+.afv-sky { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.afv-stars { position: absolute; inset: 0; display: block; }
+.afv-stars.s1 { background-image:
+  radial-gradient(1.2px 1.2px at 8% 12%, #fff 50%, transparent 51%), radial-gradient(1px 1px at 22% 34%, #cfe8ff 50%, transparent 51%),
+  radial-gradient(1.4px 1.4px at 37% 9%, #fff 50%, transparent 51%), radial-gradient(1px 1px at 51% 27%, #fff 50%, transparent 51%),
+  radial-gradient(1.2px 1.2px at 66% 14%, #bfe3ff 50%, transparent 51%), radial-gradient(1px 1px at 79% 31%, #fff 50%, transparent 51%),
+  radial-gradient(1.5px 1.5px at 91% 8%, #fff 50%, transparent 51%), radial-gradient(1px 1px at 14% 52%, #dbeeff 50%, transparent 51%),
+  radial-gradient(1px 1px at 86% 49%, #fff 50%, transparent 51%), radial-gradient(1.2px 1.2px at 5% 70%, #fff 50%, transparent 51%),
+  radial-gradient(1px 1px at 95% 66%, #cfe8ff 50%, transparent 51%), radial-gradient(1px 1px at 30% 62%, #fff 50%, transparent 51%);
+  opacity: 1; animation: afv-tw 5s ease-in-out infinite; }
+.afv-stars.s2 { background-image:
+  radial-gradient(1px 1px at 17% 22%, #fff 50%, transparent 51%), radial-gradient(1.3px 1.3px at 44% 18%, #e0f2fe 50%, transparent 51%),
+  radial-gradient(1px 1px at 58% 6%, #fff 50%, transparent 51%), radial-gradient(1px 1px at 72% 41%, #fff 50%, transparent 51%),
+  radial-gradient(1.3px 1.3px at 3% 38%, #fff 50%, transparent 51%), radial-gradient(1px 1px at 97% 24%, #fff 50%, transparent 51%),
+  radial-gradient(1px 1px at 62% 58%, #dbeeff 50%, transparent 51%), radial-gradient(1px 1px at 10% 86%, #fff 50%, transparent 51%),
+  radial-gradient(1px 1px at 90% 82%, #fff 50%, transparent 51%), radial-gradient(1.1px 1.1px at 40% 45%, #fff 50%, transparent 51%);
+  opacity: .6; animation: afv-tw 7s ease-in-out infinite reverse; }
+@keyframes afv-tw { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
+.afv-horizon { position: absolute; left: -20%; right: -20%; bottom: 0; height: 34%; display: block;
+  background: radial-gradient(60% 70% at 50% 100%, rgba(56,189,248,.20) 0%, rgba(37,99,235,.10) 45%, transparent 75%); }
+.afv-horizon::after { content: ""; position: absolute; left: 10%; right: 10%; bottom: 30%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(125,211,252,.35), transparent); }
+
+/* top bar: captions · brand · settings */
+.afv-top { display: flex; justify-content: space-between; align-items: center; height: 58px; flex: none; }
+.afv-btn { width: 48px; height: 48px; border-radius: 16px; border: 1px solid var(--line); background: var(--glass); color: var(--acc2);
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; padding: 0; flex: none;
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); transition: background .2s ease, transform .1s ease, color .2s ease;
+  -webkit-tap-highlight-color: transparent; }
+.afv-btn:hover { background: rgba(30,64,160,.55); }
+.afv-btn:active { transform: scale(.94); }
+.afv-btn svg { width: 22px; height: 22px; flex: none; }
+#afv.nocaps .afv-menu { color: rgba(234,244,255,.45); }
+.afv-brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.afv-brand > svg { width: 34px; height: 34px; flex: none; filter: drop-shadow(0 2px 8px rgba(56,189,248,.35)); }
+.afv-title { font-size: 16px; font-weight: 700; color: #fff; letter-spacing: -.01em; line-height: 1.15; }
+.afv-sub { font-size: 11px; font-weight: 600; color: var(--acc2); letter-spacing: .08em; text-transform: uppercase; opacity: .85;
+  display: flex; align-items: center; gap: 6px; margin-top: 2px; white-space: nowrap; }
+.afv-sub i { width: 7px; height: 7px; border-radius: 50%; background: #34d399; box-shadow: 0 0 8px #34d399; display: inline-block; }
+#afv[data-state="muted"] .afv-sub i, #afv[data-state="tap"] .afv-sub i { background: #fbbf24; box-shadow: 0 0 8px #fbbf24; }
+
+/* centre: the water core */
+.afv-stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 0; }
+.afv-core { --orb: min(52vw, 260px, 32vh); --lvl: 0; width: var(--orb); height: var(--orb); position: relative; flex: none;
+  margin-bottom: calc(var(--orb) * .52); }
+.afv-orb { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%; border: none; padding: 0; cursor: pointer;
+  will-change: transform; outline: none; overflow: visible; -webkit-tap-highlight-color: transparent;
+  /* fallback look if the canvas can't draw: a glass bubble half full of water, in plain CSS */
+  background: radial-gradient(ellipse 40% 25% at 34% 24%, rgba(255,255,255,.35), transparent 70%),
+    linear-gradient(180deg, #13306f 0%, #0d2156 46%, #5cc8f8 46.5%, #2b7fe0 70%, #1d4ed8 100%);
+  box-shadow: 0 0 0 2px rgba(186,230,253,.7), 0 0 60px rgba(56,189,248,.35), inset 0 -10px 30px rgba(14,165,233,.35);
+  transition: opacity .4s ease, box-shadow .4s ease; }
+.afv-orb-water { display: none; }
+.afv-orb canvas { position: absolute; left: 0; top: 0; width: 100%; height: 150%; display: block; pointer-events: none; }
+#afv[data-state="speaking"] .afv-orb, #afv[data-state="greeting"] .afv-orb { box-shadow: 0 0 0 2px rgba(186,230,253,.8), 0 0 90px rgba(56,189,248,.55); }
+#afv[data-state="muted"] .afv-orb, #afv[data-state="tap"] .afv-orb { opacity: .6; }
+
+.afv-gauge { position: absolute; inset: -15%; width: 130%; height: 130%; transform: rotate(135deg); pointer-events: none; overflow: visible; }
+.afv-gauge circle { fill: none; stroke-linecap: round; }
+.afv-g-track { stroke: rgba(125,211,252,.14); stroke-width: 3; stroke-dasharray: 263.9 400; }
+.afv-g-fill { stroke: var(--acc); stroke-width: 3.2; stroke-dasharray: 0 400; filter: drop-shadow(0 0 3px rgba(56,189,248,.8)); }
+.afv-g-ticks { stroke: rgba(125,211,252,.35); stroke-width: 2.2; stroke-dasharray: .6 7.4; stroke-linecap: butt;
+  stroke-dashoffset: 0; clip-path: none; }
+#afv[data-state="thinking"] .afv-g-fill { stroke: #a5f3fc; }
+
+.afv-ripple { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--acc2); opacity: 0; pointer-events: none; display: block; }
+#afv[data-state="listening"] .afv-ripple { animation: afv-rip 2.4s ease-out infinite; }
+#afv[data-state="listening"] .afv-ripple.r2 { animation-delay: .8s; }
+#afv[data-state="listening"] .afv-ripple.r3 { animation-delay: 1.6s; }
+@keyframes afv-rip { 0% { transform: scale(1); opacity: calc(.25 + var(--lvl) * .6); } 100% { transform: scale(calc(1.25 + var(--lvl) * .35)); opacity: 0; } }
+
+.afv-status { margin-top: 0; font-size: 17px; font-weight: 600; color: #fff; min-height: 24px; text-align: center; letter-spacing: -.005em;
+  max-width: 420px; padding: 0 10px; }
+#afv[data-state="thinking"] .afv-status { color: #a5f3fc; }
+#afv[data-state="thinking"] .afv-status::after { content: ""; display: inline-block; width: 6px; height: 6px; margin-left: 8px; border-radius: 50%;
+  background: currentColor; vertical-align: middle; animation: afv-blink .8s ease-in-out infinite; }
+@keyframes afv-blink { 50% { opacity: .2; } }
+
+/* captions */
+.afv-caps { width: 100%; max-width: 560px; margin: 0 auto 14px; min-height: 70px; text-align: center; flex: none; }
+.afv-cap { font-size: 16px; line-height: 1.45; margin: 4px 0; overflow: hidden; display: -webkit-box;
+  -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+.afv-cap:empty { display: none; }
+.afv-cap-you { color: rgba(234,244,255,.6); font-size: 14px; font-style: italic; }
+.afv-cap-you::before { content: "You: "; font-style: normal; font-weight: 600; color: var(--acc2); }
+.afv-cap-bot { color: #f4f9ff; }
+.afv-cap-bot .dim { color: rgba(234,244,255,.42); }
+#afv.nocaps .afv-caps { visibility: hidden; }
+
+/* bottom bar: mute · type · end */
+.afv-bottom { display: flex; align-items: center; gap: 10px; max-width: 560px; width: 100%; margin: 0 auto; flex: none; }
+.afv-bottom .afv-btn { width: 56px; height: 56px; border-radius: 18px; }
+.afv-pill { flex: 1; min-width: 0; height: 56px; border-radius: 18px; background: var(--glass); border: 1px solid var(--line);
+  display: flex; align-items: center; padding: 0 12px 0 6px; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.afv-kbd { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; color: var(--acc2); flex: none; cursor: text; }
+.afv-kbd svg { width: 22px; height: 22px; }
+.afv-pill input { flex: 1; min-width: 0; background: transparent; border: none; outline: none; color: #fff;
+  font: 400 16px 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; padding: 0 4px; }
+.afv-pill input::placeholder { color: rgba(186,214,255,.55); }
+.afv-mute.on { background: #f87171; border-color: #fca5a5; color: #fff; }
+.afv-bottom .afv-close { width: auto; padding: 0 18px 0 14px; color: #fff; font: 600 15px 'Inter', -apple-system, sans-serif;
+  background: linear-gradient(145deg, #2563eb, #0ea5e9); border-color: rgba(186,230,253,.5); box-shadow: 0 6px 20px rgba(14,165,233,.3); }
+.afv-bottom .afv-close:hover { filter: brightness(1.08); background: linear-gradient(145deg, #2563eb, #0ea5e9); }
+
+/* settings sheet */
+.afv-sheet { position: absolute; top: 76px; right: 16px; background: rgba(12,28,78,.92); border: 1px solid var(--line); border-radius: 18px; padding: 14px;
+  width: min(300px, calc(100vw - 32px)); display: none; z-index: 3 !important; box-shadow: 0 16px 40px rgba(0,0,0,.5);
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+.afv-sheet.open { display: block; }
+.afv-sheet label { display: block; font-size: 12px; color: var(--acc2); margin: 8px 0 6px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.afv-sheet select { width: 100%; background: #0a1a45; color: #fff; border: 1px solid var(--line); border-radius: 12px;
+  padding: 10px; font: 400 14px 'Inter', sans-serif; }
+.afv-seg { display: flex; gap: 6px; }
+.afv-seg button { flex: 1; border: 1px solid var(--line); background: #0a1a45; color: #dbeafe; border-radius: 12px; padding: 9px;
+  font: 500 14px 'Inter', sans-serif; cursor: pointer; }
+.afv-seg button.sel { background: var(--acc); color: #06204a; border-color: var(--acc); }
+.afv-note { font-size: 12px; color: rgba(219,234,254,.65); margin-top: 10px; line-height: 1.4; }
+
+@media (min-width: 900px) { .afv-core { --orb: min(30vh, 280px); } }
+@media (max-height: 640px) { .afv-core { --orb: min(44vw, 26vh); } .afv-caps { min-height: 50px; } }
+@media (prefers-reduced-motion: reduce) { .afv-stars, .afv-ripple { animation: none !important; } }
+.st-key-voicebridge { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important;
+  opacity: 0 !important; pointer-events: none !important; margin: 0 !important; }
+
+/* ---- v3: "still listening" hint, the soft ack ripple at send, and the launch-away exit ---- */
+#afv.afv-hold .afv-status { color: var(--acc2); opacity: .85; }
+#afv.afv-hold .afv-ripple { animation-duration: 2.6s !important; opacity: .55; }
+.afv-core.afv-ack::after { content: ""; position: absolute; inset: 6%; border-radius: 50%; pointer-events: none;
+  border: 2px solid rgba(125,211,252,.85); animation: afv-ack .6s ease-out forwards; }
+@keyframes afv-ack { from { transform: scale(.9); opacity: .9; } to { transform: scale(1.35); opacity: 0; } }
+
+/* End: the core launches like the rocket (nozzle spray + trail), stars streak down, then the screen fades */
+#afv.closing { pointer-events: none; animation: afv-out .25s ease-in .45s forwards; }
+@keyframes afv-out { from { opacity: 1; } to { opacity: 0; } }
+#afv.closing .afv-top, #afv.closing .afv-bottom, #afv.closing .afv-caps, #afv.closing .afv-status, #afv.closing .afv-gauge,
+#afv.closing .afv-ripple { transition: opacity .22s ease, transform .3s ease; opacity: 0; }
+#afv.closing .afv-bottom { transform: translateY(24px); }
+#afv.closing .afv-top { transform: translateY(-16px); }
+#afv.closing .afv-core { animation: afv-launch .6s cubic-bezier(.55,0,.85,.35) forwards; will-change: transform; }
+@keyframes afv-launch {
+  0%   { transform: translateY(0) scale(1); }
+  14%  { transform: translateY(14px) scale(.96, 1.04); }   /* squat on the pad */
+  100% { transform: translateY(-115vh) scale(.72, .9); }
+}
+#afv.closing .afv-core::before { content: ""; position: absolute; left: 50%; top: 86%; width: 26%; height: 70vh;
+  margin-left: -13%; border-radius: 50% 50% 40% 40%; pointer-events: none; transform-origin: 50% 0;
+  background: linear-gradient(to bottom, rgba(224,242,254,.95), rgba(125,211,252,.75) 12%, rgba(56,189,248,.28) 45%, rgba(56,189,248,0));
+  animation: afv-trail .6s ease-out forwards; }
+@keyframes afv-trail { 0% { transform: scaleY(0); opacity: 0; } 15% { transform: scaleY(.12); opacity: 1; }
+  100% { transform: scaleY(1); opacity: .85; } }
+#afv.closing .afv-stars { animation: none !important; transition: opacity .3s ease; opacity: 0; }
+@keyframes afv-streak { from { transform: translateY(0) scaleY(1); opacity: 1; } to { transform: translateY(35vh) scaleY(3.2); opacity: 0; } }
+#afv.closing .afv-horizon { transition: opacity .6s ease; opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  #afv.closing { animation: afv-out .3s ease forwards; }
+  #afv.closing .afv-core, #afv.closing .afv-stars { animation: none !important; }
+  #afv.closing .afv-core::before { display: none; }
+}
+
+/* ---------- iPhone/iPad: lighter rendering + live mic meter + diagnostics (all scoped to .afv-lite / iPhone) ---------- */
+/* blur behind glass re-renders every frame over an animated canvas - the biggest cost on iPhone, so: solid glass */
+#afv.afv-lite .afv-btn, #afv.afv-lite .afv-pill, #afv.afv-lite .afv-sheet { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+#afv.afv-lite .afv-btn, #afv.afv-lite .afv-pill { background-color: rgba(22,46,112,.92); }
+#afv.afv-lite .afv-sheet { background-color: rgba(12,28,74,.97); }
+#afv.afv-lite .afv-stars { animation: none !important; }            /* static stars (twinkle = full-screen repaints) */
+#afv.afv-lite .afv-g-fill, #afv.afv-lite .afv-brand > svg { filter: none !important; }
+#afv.afv-lite[data-state="thinking"] .afv-ripple { animation: none; opacity: 0; }
+/* the chat page underneath is fully covered: stop painting it while voice mode is open */
+body.afv-lite-open [data-testid="stAppViewContainer"], body.afv-lite-open [data-testid="stBottom"] { visibility: hidden; }
+/* live mic level: 7 small bars under the status that light up as you talk */
+.afv-meter { display: flex; gap: 5px; justify-content: center; align-items: flex-end; height: 18px; margin-top: 10px; opacity: 0; transition: opacity .2s; }
+#afv[data-state="listening"] .afv-meter { opacity: 1; }
+.afv-meter i { display: block; width: 6px; border-radius: 3px; background: rgba(125,211,252,.25); height: 6px; transition: background .08s, height .08s; }
+.afv-meter i:nth-child(2), .afv-meter i:nth-child(6) { height: 10px; } .afv-meter i:nth-child(3), .afv-meter i:nth-child(5) { height: 14px; }
+.afv-meter i:nth-child(4) { height: 18px; }
+.afv-meter i.on { background: #7dd3fc; box-shadow: 0 0 6px rgba(125,211,252,.8); }
+#afv > .afv-debug { position: absolute; left: 8px; right: 8px; bottom: calc(4px + env(safe-area-inset-bottom)); z-index: 5; font: 10px/1.3 ui-monospace, Menlo, monospace;
+  color: #a5f3fc; background: rgba(0,0,0,.55); padding: 3px 6px; border-radius: 6px; pointer-events: none; word-break: break-all; }
+/* home-screen app without mic access: one-tap way to Safari */
+#afv > .afv-safari { position: absolute; left: 16px; right: 16px; bottom: calc(96px + env(safe-area-inset-bottom)); z-index: 6; background: rgba(12,28,74,.97);
+  border: 1px solid rgba(125,211,252,.35); border-radius: 18px; padding: 14px 16px; color: #e0f2fe; font-size: 14px; line-height: 1.4; text-align: left; }
+.afv-safari b { display: block; color: #fff; margin-bottom: 4px; }
+.afv-safari-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.afv-safari-row a, .afv-safari-row button { flex: 1 1 auto; min-height: 44px; border-radius: 22px; border: 1px solid rgba(125,211,252,.4); background: rgba(30,58,138,.9);
+  color: #fff; font: 600 14px Inter, -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; text-decoration: none; padding: 0 14px; }
+.afv-safari-row .afv-safari-go { background: linear-gradient(145deg, #2563eb, #0ea5e9); border-color: transparent; }
+
+/* ---- v4: steady captions (one sentence at a time, fixed box on phones so nothing jumps or overlaps),
+   Arabic shown right-to-left (dir="auto" on each caption), smaller water core on short phone screens ---- */
+.afv-cap-you::before { unicode-bidi: isolate; }
+.afv-cap-you { -webkit-line-clamp: 2; }
+@media (max-width: 899px) {
+  .afv-caps { height: 118px; min-height: 0; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
+}
+@media (max-width: 899px) and (max-height: 640px) {
+  .afv-caps { height: 96px; } .afv-cap-you { -webkit-line-clamp: 1; }
+}
+@media (max-height: 600px) { .afv-core { --orb: min(40vw, 21vh); } }
+
+/* ---- v5: the horizon line sits in the gap between the captions and the bottom bar (fixed distance from the
+   bottom), so a long 3-line caption never runs over it, on any screen height ---- */
+.afv-horizon::after { bottom: calc(max(16px, env(safe-area-inset-bottom)) + 56px + 9px); }
+.afv-caps { margin-bottom: 20px; }

@@ -1,0 +1,93 @@
+<!doctype html>
+<html><head><meta charset="utf-8"></head>
+<body style="margin:0;background:transparent">
+<!--
+  AquaFalcon voice mode - the Streamlit "bridge" (custom component, no npm build needed).
+  This tiny invisible frame speaks Streamlit's component protocol with plain postMessage:
+    componentReady -> render(args) -> setComponentValue(question)
+  It loads voice.js + voice.css into the main page (same server, so allowed), because the
+  full-screen voice screen, the microphone and the browser voice must live in the main page.
+-->
+<script>
+(function () {
+  var P = window.parent;
+  var lastArgs = {};
+  function post(type, extra) {
+    var msg = Object.assign({ isStreamlitMessage: true, type: type }, extra || {});
+    // run from THIS frame's own timer so Streamlit sees the message coming from our frame
+    window.setTimeout(function () { P.postMessage(msg, "*"); }, 0);
+  }
+  function send(value) { post("streamlit:setComponentValue", { value: value, dataType: "json" }); }
+  function attach() {
+    if (!P.AFVoice) { return window.setTimeout(attach, 60); }
+    P.AFVoice.connect(send);
+    P.AFVoice.update(lastArgs);
+  }
+  function boot() {
+    var d = P.document, v = (lastArgs && lastArgs.version) || "1";
+    if (!d.getElementById("afv-css")) {
+      var l = d.createElement("link"); l.id = "afv-css"; l.rel = "stylesheet";
+      l.href = new URL("voice.css?v=" + v, location.href).href; d.head.appendChild(l);
+    }
+    if (!d.getElementById("afv-js")) {
+      var s = d.createElement("script"); s.id = "afv-js";
+      s.src = new URL("voice.js?v=" + v, location.href).href; d.head.appendChild(s);
+    }
+    installTags(d);
+    attach();
+  }
+  // "Add to Home Screen" (iPhone) / "Install app" (Chrome): Streamlit doesn't let us edit <head>, so this
+  // frame (same server = allowed) adds the app name, icon and full-screen tags to the main page's <head>.
+  // The icon + manifest are plain files in ./static, served by Streamlit at /app/static/...
+  function installTags(d) {
+    if (d.getElementById("af-pwa")) return;
+    var base = P.location.pathname.replace(/[^\/]*$/, "") + "app/static/";
+    function add(tag, attrs) {
+      var el = d.createElement(tag);
+      for (var k in attrs) el.setAttribute(k, attrs[k]);
+      d.head.appendChild(el); return el;
+    }
+    add("link", { id: "af-pwa", rel: "manifest", href: base + "manifest.json" });
+    add("link", { rel: "apple-touch-icon", sizes: "180x180", href: base + "icon-180.png" });
+    add("link", { rel: "icon", type: "image/png", sizes: "192x192", href: base + "icon-192.png" });
+    add("meta", { name: "apple-mobile-web-app-capable", content: "yes" });
+    add("meta", { name: "mobile-web-app-capable", content: "yes" });
+    add("meta", { name: "apple-mobile-web-app-title", content: "AquaFalcon" });
+    add("meta", { name: "application-name", content: "AquaFalcon" });
+    add("meta", { name: "apple-mobile-web-app-status-bar-style", content: "default" });
+    var tc = d.querySelector('meta[name="theme-color"]') || add("meta", { name: "theme-color" });
+    tc.setAttribute("content", "#0f2257");
+  }
+  // this bridge frame is invisible: keep it out of the keyboard Tab order and away from screen readers
+  try { var fe = window.frameElement; fe.setAttribute("tabindex", "-1"); fe.setAttribute("aria-hidden", "true");
+        fe.setAttribute("title", "voice mode bridge"); } catch (e) {}
+  // Welcome screen on a phone: the page is taller than the screen and Streamlit's chat layout scrolls to the
+  // bottom, which pushed the logo and title under the top bar. While the chat is empty, start at the top instead.
+  var welcomeShown = false;
+  function welcomeTop() {
+    try {
+      var d = P.document, w = d.querySelector(".welcome"), chat = d.querySelector('[class*="st-key-umsg"]');
+      if (!w || chat) { welcomeShown = false; return; }
+      if (welcomeShown) return;
+      welcomeShown = true;
+      [60, 400, 1200].forEach(function (ms) {
+        window.setTimeout(function () {
+          var m = d.querySelector('[data-testid="stAppScrollToBottomContainer"]') || d.querySelector('[data-testid="stMain"]');
+          if (m && d.querySelector(".welcome") && !d.querySelector('[class*="st-key-umsg"]')) m.scrollTop = 0;
+        }, ms);
+      });
+    } catch (e) {}
+  }
+  var booted = false;
+  window.addEventListener("message", function (e) {
+    if (!e.data || e.data.type !== "streamlit:render") return;
+    lastArgs = e.data.args || {};
+    if (!booted) { booted = true; boot(); }
+    else if (P.AFVoice) { P.AFVoice.update(lastArgs); }
+    welcomeTop();
+  });
+  post("streamlit:componentReady", { apiVersion: 1 });
+  post("streamlit:setFrameHeight", { height: 0 });
+})();
+</script>
+</body></html>

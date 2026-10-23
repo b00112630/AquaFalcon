@@ -1,0 +1,25 @@
+# Test question set - covers every area the brief asks for.
+#   type: normal   -> should answer, and mention at least one of expect_any
+#   type: unknown  -> the fact is NOT in our file; the bot must admit it doesn't know
+#   type: offtopic -> not about the rocket; the bot must politely redirect
+- {id: 1,  area: "Name / identity",        type: normal,   question: "Hi! Who are you?",                                          expect_any: ["AquaFalcon"]}
+- {id: 2,  area: "How it works - Newton",  type: normal,   question: "How does a water rocket actually fly?",                       expect_any: ["third law", "Third Law", "thrust", "reaction"]}
+- {id: 3,  area: "How it works - pressure",type: normal,   question: "Why does the pressure inside the bottle matter?",            expect_any: ["pressure", "psi"]}
+- {id: 4,  area: "Stability (CG/CP)",      type: normal,   question: "Why doesn't the rocket tumble in the air?",                   expect_any: ["centre of gravity", "center of gravity", "CG", "centre of pressure", "center of pressure"]}
+- {id: 5,  area: "Projectile motion",      type: normal,   question: "What happens after the water runs out, and why launch at 45 degrees?", expect_any: ["projectile", "gravity", "parabola", "45"]}
+- {id: 6,  area: "Team design",            type: normal,   question: "Describe your rocket's design.",                              expect_any: ["46", "fins", "nose"]}
+- {id: 7,  area: "Materials",              type: normal,   question: "What materials did you use?",                                 expect_any: ["PET", "bottle", "folder"]}
+- {id: 8,  area: "Water volume",           type: normal,   question: "How much water do you put in the rocket and why?",            expect_any: ["500"]}
+- {id: 9,  area: "Testing results",        type: normal,   question: "What were your test results?",                                expect_any: ["22.5"]}
+- {id: 10, area: "Team",                   type: normal,   question: "Who is on your team?",                                        expect_any: ["Nabil"]}
+- {id: 11, area: "Safety",                 type: normal,   question: "How do you keep people safe during launches?",                expect_any: ["4.6", "goggles"]}
+- {id: 12, area: "Sustainability",         type: normal,   question: "How is your project sustainable?",                            expect_any: ["reuse", "reused", "recycl", "repurpos", "old plastic", "water and air"]}
+- {id: 13, area: "FAQ",                    type: normal,   question: "Why did you choose 3 fins instead of 4?",                     expect_any: ["drag", "stability", "stable"]}
+- {id: 14, area: "Limitation - unknown fact", type: unknown, question: "How far did AquaFalcon fly at the competition, and what place did you get?", expect_any: []}
+- {id: 15, area: "Limitation - unknown fact", type: unknown, question: "How much money did your team spend building the rocket?",  expect_any: []}
+- {id: 16, area: "Off-topic",              type: offtopic, question: "Can you solve my calculus homework: integrate x^2 sin(x)?",  expect_any: []}
+- {id: 17, area: "Off-topic",              type: offtopic, question: "Who will win the World Cup?",                                 expect_any: []}
+- {id: 18, area: "Typos / near-meaning",   type: normal,   question: "Okay but how for a can you fight",                             expect_any: ["22.5"]}
+- {id: 19, area: "Typos / near-meaning",   type: normal,   question: "how far did it go?",                                          expect_any: ["22.5"]}
+- {id: 20, area: "Typos / near-meaning",   type: normal,   question: "what materails did u use",                                    expect_any: ["PET", "bottle", "folder"]}
+- {id: 21, area: "Arabic",                 type: normal,   question: "شو المواد اللي استخدمتوها؟",                                    expect_any: ["PET", "bottle", "folder", "قنينة", "بلاستيك"]}

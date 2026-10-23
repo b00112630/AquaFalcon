@@ -1,0 +1,101 @@
+# =====================================================================
+#  ROCKET INFO  --  the ONE file your team edits.
+#  The chatbot's name and every team fact come from here.
+#
+#  Everything marked  # EXAMPLE  is a made-up placeholder so the demo
+#  works out of the box.  Replace it with your team's REAL values.
+#
+#  If you don't know a value yet, write   unknown   and the bot will
+#  honestly say "we haven't recorded that yet" instead of guessing.
+# =====================================================================
+
+rocket:
+  name: "AquaFalcon"                      # EXAMPLE  <- your rocket's name = the chatbot's name
+  emoji: "🚀"
+  tagline: "Small bottle, big dreams."     # EXAMPLE
+  team_name: "Team 7"                     # EXAMPLE
+  course: "NGN110 - Introduction to Engineering and Computing, AUS, Fall 2026, Section 20"
+
+team_members:                             # EXAMPLE - replace with your real team
+  - name: "Nabil"
+    role: "Chatbot developer and launch-day pump operator"
+  - name: "Teammate 2"
+    role: "Fins and stability design (CG/CP)"
+  - name: "Teammate 3"
+    role: "Nose cone and materials"
+  - name: "Teammate 4"
+    role: "Testing, data logging and safety officer"
+
+design:
+  bottle: "1.5 L PET water bottle (one bottle, no joins)"          # EXAMPLE
+  total_length_cm: 46                     # EXAMPLE  (competition rule: must be under 50 cm)
+  dry_mass_g: 115                         # EXAMPLE  (mass without water)
+  nose_cone: "Cone cut from the top of a second bottle, lined with cardboard, with 20 g of modelling clay in the tip to move the centre of gravity forward"  # EXAMPLE
+  fins: "3 trapezoid fins cut from an old plastic folder, spaced 120 degrees apart near the nozzle end"  # EXAMPLE
+  fin_size: "8 cm root, 4 cm tip, 6 cm span"   # EXAMPLE
+  stability: "Centre of gravity is about 1.5 body diameters ahead of the centre of pressure (checked with the string swing test)"  # EXAMPLE
+  launcher: "Competition launch pad with an electric pump provided on the day; a bike pump with a pressure gauge for our own tests"
+  why_this_design: "We kept it short and light to stay under the 50 cm limit, put weight in the nose for stability, and used three fins because they gave the same stability as four with less drag and less material"  # EXAMPLE
+
+materials:                                # EXAMPLE
+  - "1.5 L PET bottle (rocket body / pressure chamber)"
+  - "Second PET bottle top (nose cone)"
+  - "Recycled plastic folder (fins)"
+  - "Cardboard (nose cone lining)"
+  - "Modelling clay (nose weight)"
+  - "Duct tape and hot glue"
+
+launch:
+  water_volume_ml: 500                    # EXAMPLE  (about 1/3 of the bottle)
+  water_fraction: "about one third of the bottle"   # EXAMPLE
+  launch_pressure_psi: 60                 # EXAMPLE
+  launch_pressure_note: "This is the pressure from our OWN test launches (bike pump with a gauge). On competition day the organisers' electric pump sets the pressure, and we don't know that value yet"
+  max_safe_pressure_psi: "unknown - we did not measure the bottle's burst limit; 60 psi is only our TEST pressure"
+  launch_angle_deg: 45                    # EXAMPLE
+  best_water_volume_reason: "Too little water = thrust ends too soon; too much water = less room for compressed air and a heavier rocket. Our tests showed about 1/3 full went furthest."  # EXAMPLE
+
+# One line per test launch.  Add your own rows!                       # EXAMPLE DATA
+# (add  date: "2026-10-20"  to a row only once that launch has really happened)
+test_results:
+  - {test: 1, water_ml: 300, pressure_psi: 40, angle_deg: 45, distance_m: 9.5,  notes: "Wobbly flight, nose too light"}
+  - {test: 2, water_ml: 500, pressure_psi: 40, angle_deg: 45, distance_m: 14.0, notes: "Added 20 g clay to nose - much straighter"}
+  - {test: 3, water_ml: 500, pressure_psi: 60, angle_deg: 45, distance_m: 22.5, notes: "Best flight so far"}
+  - {test: 4, water_ml: 700, pressure_psi: 60, angle_deg: 45, distance_m: 17.0, notes: "Too much water, heavier and less air"}
+  - {test: 5, water_ml: 500, pressure_psi: 60, angle_deg: 45, distance_m: 21.8, notes: "Repeat of test 3 - consistent"}
+
+best_result:
+  distance_m: 22.5                        # EXAMPLE
+  settings: "500 mL water, 60 psi, 45 degrees (test 3)"   # EXAMPLE
+  max_height_m: unknown                   # we did not measure height (the bot will say so, not guess)
+
+competition:
+  date: "Sunday 15 November 2026"
+  result_distance_m: unknown              # fill in after the competition!
+  placement: unknown                      # fill in after the competition!
+  minimum_distance_m: 6                   # from the brief: must fly at least 6 m
+
+safety:                                   # from the brief + EXAMPLE team rules
+  - "Everyone stays at least 4.6 m (15 ft) away from the launch pad"
+  - "Safety goggles on for anyone near the launcher"
+  - "Clear countdown before every launch, and nobody downrange"
+  - "Only pressurise the bottle once everyone is behind the line"
+  - "Never use damaged or dented bottles; we retire a bottle after 10-15 launches"
+  - "We never go above the bottle's safe pressure and always use a gauge"
+  - "Never stand over the rocket or approach it while it is pressurised"
+
+sustainability:                           # EXAMPLE - replace with your real choices
+  - "Body and nose cone are reused water bottles - no new plastic bought"
+  - "Fins are cut from an old plastic folder"
+  - "The rocket is powered by water and air only - no fuel, no combustion, no emissions"
+  - "Test water was collected from the landing area and reused for watering plants"
+  - "After the project the bottles go into the AUS recycling bins"
+
+faq:                                      # EXAMPLE - add questions you expect the audience to ask
+  - q: "Why did you choose 3 fins instead of 4?"
+    a: "Three fins gave the same stability in our swing test, with less drag and less material."
+  - q: "What was the hardest part?"
+    a: "Getting the rocket stable - the first launch wobbled until we added weight to the nose."
+  - q: "What would you improve?"
+    a: "A smoother, more pointed nose cone to cut drag, and more tests at different angles."
+  - q: "Can the rocket explode?"
+    a: "A PET bottle can burst if over-pressurised or damaged, which is why we use a gauge, stay 4.6 m away and retire old bottles."

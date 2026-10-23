@@ -1,0 +1,17 @@
+streamlit==1.66.*      # pinned: newer Streamlit versions may remove components.v1.html, which voice mode uses
+pyyaml>=6.0
+altair>=5              # charts in the chat (normally installed together with Streamlit)
+requests>=2.31
+python-dotenv>=1.0
+edge-tts>=6.1          # free online voice (Arabic answers, and English if Kokoro isn't installed). No key
+gTTS>=2.5              # backup for edge-tts (free, no key)
+
+# OPTIONAL - the natural English voice "Heart" that runs on your own computer (fast, no internet, no limits):
+#   pip install kokoro-onnx lameenc
+#   python tts.py kokoro-download        (one-time ~120 MB model download)
+# Without it the app still works and uses the edge-tts voice.
+# optional: free local speech-to-text for the app (no key): pip install faster-whisper
+
+# --- Streamlit Cloud: natural English voice "Heart" (model is downloaded on first start) ---
+kokoro-onnx==0.6.1
+lameenc>=1.7
