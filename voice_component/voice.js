@@ -1,3 +1,8 @@
+
+/* On streamlit.app, reopen with ?embed=true so Streamlit's floating crown/profile badges don't cover our buttons */
+try { (function(){ var T = window.top, L = T.location;
+  if (/\.streamlit\.app$/.test(L.hostname) && !/[?&]embed=true/.test(L.search)) {
+    L.replace(L.pathname + (L.search ? L.search + "&" : "?") + "embed=true" + L.hash); } })(); } catch (e) {}
 /* AquaFalcon voice mode - runs in the main page (loaded by voice_component/index.html).
    Free browser APIs only:
      - SpeechRecognition (Chrome, Edge, iPhone Safari 14.5+) turns your voice into text
