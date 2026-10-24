@@ -3,9 +3,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="lab.css?v=4">
+<link rel="stylesheet" href="lab.css?v=5">
 </head>
 <body>
+<div id="boot" style="position:fixed;inset:0;z-index:50;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;font:600 14px Inter,system-ui,sans-serif;color:#64748b;transition:opacity .3s ease">
+  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='16' fill='none' stroke='%23e5e7eb' stroke-width='4'/%3E%3Cpath d='M20 4a16 16 0 0 1 16 16' fill='none' stroke='%231e3a8a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 20 20' to='360 20 20' dur='.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E" width="38" height="38" alt=""><span>Loading Launch Lab…</span></div>
 <!-- AquaFalcon Launch Lab: an interactive water-rocket flight simulator (Streamlit custom component, no build step).
      physics.js = the flight model (same maths as launchlab.py), lab.js = drawing + controls. -->
 <div class="lab" id="lab">
@@ -97,5 +99,5 @@
   <p class="note" id="note">Ideal physics model (Bernoulli water thrust → air blast → coast with drag). No wind, wobble or leaks, so real launches fly shorter. Starting values are the sample numbers from rocket_info.yaml.</p>
 </div>
 <script src="physics.js?v=1"></script>
-<script src="lab.js?v=4"></script>
+<script src="lab.js?v=5"></script>
 </body></html>
