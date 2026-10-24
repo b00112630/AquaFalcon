@@ -321,3 +321,15 @@ How it works (`whatif.py`, about 300 lines, no AI involved):
 
 **Real data = automatic update.** Both features read `test_results:` in `rocket_info.yaml` every time. Paste in your real launches (keep the same columns: `water_ml`, `pressure_psi`, `angle_deg`, `distance_m`) and every estimate, assumption line, tested range and chart updates by itself. Tip: tests at **2+ different pressures** and **3+ different water amounts** give the best fits. If you also test other angles, the calculator will mark those as tested.
 
+
+## Launch Lab - interactive flight simulator (Oct 2026)
+A separate page (the chat page is unchanged): tap the small rocket button in the top bar.
+* Slide the water, pressure, launch angle and empty mass, pick bottle size, fins, nose and nozzle, press **Launch**:
+  the rocket flies on screen (slow motion while the water pushes), with live height/speed charts.
+* **Best water amount** tries every water level (2-80 %) and marks the best one; "Use it" sets it and launches.
+* **Ask AquaFalcon why** goes back to the chat with your setup as a question (numbers re-computed in Python).
+* The model (launchlab.py, same maths in lab_component/physics.js): Bernoulli water thrust with the air expanding
+  adiabatically, then an air blast (compressible nozzle flow), then a coast with gravity + air drag. It is IDEAL
+  (no wind, wobble or leaks), so real launches fly shorter. Start values come from rocket_info.yaml.
+* Tests: `python tests/test_launchlab.py` (more pressure = higher, ~30 % water is best, 0 psi = no flight,
+  JavaScript and Python give the same numbers).
