@@ -18,12 +18,16 @@ import time
 import streamlit as st
 
 # Launch Lab (lab_page.py): shown instead of the chat when the rocket button was pressed (or ?view=lab)
-if st.session_state.get("view") == "lab" or (st.query_params.get("view") == "lab" and st.session_state.get("view") != "chat"):
+if st.query_params.get("view") == "lab" and "view" not in st.session_state:
     st.session_state.view = "lab"
-    import runpy as _runpy
-    from pathlib import Path as _P
-    _runpy.run_path(str(_P(__file__).resolve().parent / "lab_page.py"), run_name="__lab__")
-    st.stop()
+if st.session_state.get("view") == "lab":
+    import lab_mode as _lab_mode
+    if not _lab_mode.handle_return(st):
+        import runpy as _runpy
+        from pathlib import Path as _P
+        _runpy.run_path(str(_P(__file__).resolve().parent / "lab_page.py"), run_name="__lab__")
+        st.stop()
+    st.query_params.clear()
 import streamlit.components.v1 as components
 
 # On Streamlit Community Cloud, keys live in "Secrets" instead of a .env file
@@ -100,6 +104,9 @@ header[data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stDecor
 .st-key-settings button:hover { background: #f8fafc !important; }
 .st-key-settings button p { font-size: 13px !important; }
 
+
+/* coming back from the Launch Lab: hide the Lab while the chat redraws, fade the chat in */
+[data-stale="true"]:has(iframe[title*="launch_lab"]) { display: none !important; }
 /* Launch Lab button (lab_page.py), pinned into the top bar (its wrapper takes no space in the page) */
 [data-testid="stLayoutWrapper"]:has(> .st-key-lablink) { position: absolute; width: 0; height: 0; }
 .st-key-lablink { position: fixed; top: 12px; z-index: 1000; width: auto !important;
@@ -259,9 +266,8 @@ st.markdown(f"""<div class="topbar"><div class="inner">{LOGO}
 <div class="sub"><span class="dot"></span>{html.escape(R['team_name'])} · Water rocket assistant</div></div>
 </div></div>""", unsafe_allow_html=True)
 with st.container(key="lablink"):   # Launch Lab (lab_page.py) - rocket button in the top bar
-    if st.button("Launch Lab", icon=":material/rocket_launch:", key="lab_open"):
-        st.session_state.view = "lab"
-        st.rerun()
+    st.button("Launch Lab", icon=":material/rocket_launch:", key="lab_open",
+              on_click=lambda: st.session_state.update(view="lab"))   # one run straight into the Lab
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
