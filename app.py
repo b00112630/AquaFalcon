@@ -22,6 +22,9 @@ if st.query_params.get("view") == "lab" and "view" not in st.session_state:
     st.session_state.view = "lab"
 if st.session_state.get("view") == "lab":
     import lab_mode as _lab_mode
+    if not hasattr(_lab_mode, "handle_return"):      # a server started before this update has the old module loaded
+        import importlib as _il
+        _lab_mode = _il.reload(_lab_mode)
     if not _lab_mode.handle_return(st):
         import runpy as _runpy
         from pathlib import Path as _P
