@@ -1,5 +1,5 @@
 """
-lab_mode.py - the Launch Lab component (Python side). The page is pages/launch_lab.py; the browser part
+lab_mode.py - the Launch Lab component (Python side). The page is lab_page.py; the browser part
 lives in lab_component/ (index.html, lab.css, lab.js, physics.js - plain files, no build step).
 """
 from pathlib import Path
