@@ -132,8 +132,8 @@ def test_javascript_matches_python():
 def test_main_page_unchanged_apart_from_the_lab_button():
     """Nabil's rule: the chat page stays exactly the same. The only addition in app.py is the Launch Lab link."""
     src = (ROOT / "app.py").read_text(encoding="utf-8")
-    assert src.count("lablink") >= 2 and 'st.page_link("pages/launch_lab.py"' in src
-    assert (ROOT / "pages" / "launch_lab.py").exists()
+    assert src.count("lablink") >= 2 and 'key="lab_open"' in src and "lab_page.py" in src
+    assert (ROOT / "lab_page.py").exists() and not (ROOT / "pages").exists()
 
 
 if __name__ == "__main__":
