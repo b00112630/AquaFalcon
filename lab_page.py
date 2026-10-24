@@ -58,6 +58,12 @@ footer, #MainMenu, [data-testid="stSidebar"], [data-testid="stSidebarCollapsedCo
   margin-right: 5px; vertical-align: 1px; }
 @media (min-width: 1100px) { .topbar .title { font-size: 16px; } }
 iframe { color-scheme: light; }
+/* smooth hand-off from the chat: hide the old page instead of showing it frozen, fade the Lab in, spinner until it paints */
+[data-stale="true"] { opacity: 0 !important; transition: none !important; }
+iframe[title*="launch_lab"] { min-height: 78vh; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='16' fill='none' stroke='%23e5e7eb' stroke-width='4'/%3E%3Cpath d='M20 4a16 16 0 0 1 16 16' fill='none' stroke='%231e3a8a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 20 20' to='360 20 20' dur='.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E") center 120px / 38px no-repeat;
+  animation: labin .35s ease both; }
+@keyframes labin { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
 /* the style + top-bar blocks take no room, so no gap above the Lab */
 [data-testid="stMainBlockContainer"] > [data-testid="stVerticalBlock"],
 [data-testid="stMainBlockContainer"] > div > [data-testid="stVerticalBlock"] { gap: 0 !important; }
