@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lab.css?v=4">
+</head>
+<body>
+<!-- AquaFalcon Launch Lab: an interactive water-rocket flight simulator (Streamlit custom component, no build step).
+     physics.js = the flight model (same maths as launchlab.py), lab.js = drawing + controls. -->
+<div class="lab" id="lab">
+  <header class="top">
+    <button class="back" id="back" type="button" aria-label="Back to the chat">
+      <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" /></svg><span>Chat</span></button>
+    <div class="ttl">
+      <svg class="drop" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5c2.8 2.6 4.2 6 4.2 10.1v5.6H7.8v-5.6C7.8 8.5 9.2 5.1 12 2.5z"/><path d="M7.8 13.8L5 17.2v2.7l2.8-1.3zM16.2 13.8l2.8 3.4v2.7l-2.8-1.3z" opacity=".6"/><path d="M12 19.2c.7 1 1.05 1.7 1.05 2.2a1.05 1.05 0 0 1-2.1 0c0-.5.35-1.2 1.05-2.2z" fill="#3b82f6"/></svg>
+      <div><b>Launch Lab</b><small id="sub">Water rocket flight simulator</small></div>
+    </div>
+    <button class="ghost" id="reset" type="button" title="Back to the values in rocket_info.yaml">Team values</button>
+  </header>
+
+  <div class="grid">
+    <section class="stage card">
+      <div class="canvas-wrap"><canvas id="sky" aria-label="Animated rocket flight"></canvas>
+        <div class="badge" id="slowmo">SLOW-MO · water thrust</div>
+        <div class="badge warn" id="warn"></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><span>Distance</span><b id="s-range">–</b></div>
+        <div class="stat"><span>Max height</span><b id="s-apo">–</b></div>
+        <div class="stat"><span>Top speed</span><b id="s-spd">–</b></div>
+        <div class="stat"><span>Push time</span><b id="s-push">–</b></div>
+      </div>
+      <div class="go-row">
+        <button class="go" id="go" type="button">
+          <svg viewBox="0 0 24 24"><path d="M12 2.5c2.8 2.6 4.2 6 4.2 10.1v5.6H7.8v-5.6C7.8 8.5 9.2 5.1 12 2.5z"/><path d="M7.8 13.8L5 17.2v2.7l2.8-1.3zM16.2 13.8l2.8 3.4v2.7l-2.8-1.3z" opacity=".7"/></svg>
+          <span id="go-label">Launch</span></button>
+        <div class="chip-stab" id="stab"></div>
+      </div>
+    </section>
+
+    <section class="panel card">
+      <div class="panel-h">Setup</div>
+      <div class="ctl">
+        <div class="ctl-h"><label for="fill">Water</label><output id="o-fill"></output></div>
+        <div class="fill-row"><svg class="bottle" viewBox="0 0 40 80" aria-hidden="true">
+            <defs><clipPath id="bclip"><path d="M15 2h10v8c0 3 9 6 9 14v46a8 8 0 0 1-8 8H14a8 8 0 0 1-8-8V24c0-8 9-11 9-14z"/></clipPath>
+            <linearGradient id="wgrad" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#93c5fd"/><stop offset="1" stop-color="#3b82f6"/></linearGradient></defs>
+            <rect id="bwater" x="0" y="80" width="40" height="0" fill="url(#wgrad)" clip-path="url(#bclip)"/>
+            <path class="bline" d="M15 2h10v8c0 3 9 6 9 14v46a8 8 0 0 1-8 8H14a8 8 0 0 1-8-8V24c0-8 9-11 9-14z"/></svg>
+          <input type="range" id="fill" min="0" max="80" step="1"></div>
+      </div>
+      <div class="ctl">
+        <div class="ctl-h"><label for="psi">Pressure</label><output id="o-psi"></output></div>
+        <input type="range" id="psi" min="0" max="100" step="1">
+      </div>
+      <div class="ctl">
+        <div class="ctl-h"><label for="angle">Launch angle</label><output id="o-angle"></output></div>
+        <input type="range" id="angle" min="15" max="90" step="1">
+      </div>
+      <div class="ctl">
+        <div class="ctl-h"><label for="dry">Empty mass</label><output id="o-dry"></output></div>
+        <input type="range" id="dry" min="50" max="300" step="5">
+      </div>
+      <div class="seg-grid">
+        <div class="seg-wrap"><span>Bottle</span><div class="seg" data-k="bottle_l">
+          <button data-v="1">1 L</button><button data-v="1.5">1.5 L</button><button data-v="2">2 L</button></div></div>
+        <div class="seg-wrap"><span>Fins</span><div class="seg" data-k="fins">
+          <button data-v="0">None</button><button data-v="3">3</button><button data-v="4">4</button></div></div>
+        <div class="seg-wrap"><span>Nose</span><div class="seg" data-k="nose">
+          <button data-v="cone">Cone</button><button data-v="ogive">Round</button><button data-v="flat">Flat</button></div></div>
+        <div class="seg-wrap"><span>Nozzle</span><div class="seg" data-k="nozzle_mm">
+          <button data-v="21.5">Full neck</button><button data-v="9">Narrow</button></div></div>
+      </div>
+    </section>
+
+    <section class="charts card">
+      <div class="chart-box">
+        <div class="chart-h"><b>Flight</b><span class="leg"><i class="c1"></i>Height (m) <i class="c2"></i>Speed (m/s)</span></div>
+        <canvas id="ch-flight" aria-label="Height and speed over time"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-h"><b>Best water amount</b>
+          <div class="seg mini" data-k="goal"><button data-v="range">Distance</button><button data-v="height">Height</button></div></div>
+        <canvas id="ch-sweep" aria-label="Distance for every water amount"></canvas>
+        <div class="sweep-foot"><span id="sweep-txt"></span><button class="ghost sm" id="use-best" type="button">Use it</button></div>
+      </div>
+    </section>
+
+    <section class="ask card">
+      <div><b>Why does it fly like that?</b><small>Opens the chat with this exact setup, so __NAME__ can explain the physics.</small></div>
+      <button class="askb" id="ask" type="button">
+        <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4h0A1.5 1.5 0 0 1 4 14.5z"/></svg>
+        <span id="ask-label">Ask __NAME__ why</span></button>
+    </section>
+  </div>
+  <p class="note" id="note">Ideal physics model (Bernoulli water thrust → air blast → coast with drag). No wind, wobble or leaks, so real launches fly shorter. Starting values are the sample numbers from rocket_info.yaml.</p>
+</div>
+<script src="physics.js?v=1"></script>
+<script src="lab.js?v=4"></script>
+</body></html>
