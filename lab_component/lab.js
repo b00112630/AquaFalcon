@@ -545,3 +545,9 @@
     $("use-best").disabled = near; $("use-best").textContent = near ? "You're there ✓" : "Use it";
   }
 })();
+
+// hide the loading screen once the Lab has drawn its first frame
+(function () { function done() { var b = document.getElementById("boot"); if (!b) return;
+  b.style.opacity = "0"; setTimeout(function () { if (b.parentNode) b.parentNode.removeChild(b); }, 320); }
+  if (document.readyState === "complete") requestAnimationFrame(done); else window.addEventListener("load", function () { requestAnimationFrame(done); });
+  setTimeout(done, 2500); })();
