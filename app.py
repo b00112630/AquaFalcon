@@ -16,6 +16,14 @@ import re
 import time
 
 import streamlit as st
+
+# Launch Lab (lab_page.py): shown instead of the chat when the rocket button was pressed (or ?view=lab)
+if st.session_state.get("view") == "lab" or (st.query_params.get("view") == "lab" and st.session_state.get("view") != "chat"):
+    st.session_state.view = "lab"
+    import runpy as _runpy
+    from pathlib import Path as _P
+    _runpy.run_path(str(_P(__file__).resolve().parent / "lab_page.py"), run_name="__lab__")
+    st.stop()
 import streamlit.components.v1 as components
 
 # On Streamlit Community Cloud, keys live in "Secrets" instead of a .env file
@@ -91,6 +99,18 @@ header[data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stDecor
   color: var(--ink) !important; font-size: 13px !important; font-weight: 500; box-shadow: none !important; }
 .st-key-settings button:hover { background: #f8fafc !important; }
 .st-key-settings button p { font-size: 13px !important; }
+
+/* Launch Lab button (lab_page.py), pinned into the top bar (its wrapper takes no space in the page) */
+[data-testid="stLayoutWrapper"]:has(> .st-key-lablink) { position: absolute; width: 0; height: 0; }
+.st-key-lablink { position: fixed; top: 12px; z-index: 1000; width: auto !important;
+  right: max(1.25rem, calc((100vw - 720px) / 2 + 1.25rem)); }
+.st-key-lablink button { border: 1px solid var(--line); background: #fff; border-radius: 999px; height: 36px;
+  padding: 0 14px 0 11px; display: flex; align-items: center; gap: 6px; text-decoration: none; }
+.st-key-lablink button:hover { background: #f8fafc; }
+.st-key-lablink button span, .st-key-lablink button p { color: var(--accent) !important; font-size: 13px !important; font-weight: 600; }
+@media (min-width: 1100px) { .st-key-lablink { right: max(1.25rem, calc((100vw - 780px) / 2 + 1.25rem)); } }
+@media (max-width: 640px) { .st-key-lablink { right: 1rem; } .st-key-lablink button { width: 36px; padding: 0; justify-content: center; }
+  .st-key-lablink button p { display: none; } }
 
 /* welcome state */
 .welcome { text-align: center; padding: 7vh 0 4px; }
@@ -238,6 +258,10 @@ st.markdown(f"""<div class="topbar"><div class="inner">{LOGO}
 <div><div class="title">{html.escape(NAME)}</div>
 <div class="sub"><span class="dot"></span>{html.escape(R['team_name'])} · Water rocket assistant</div></div>
 </div></div>""", unsafe_allow_html=True)
+with st.container(key="lablink"):   # Launch Lab (lab_page.py) - rocket button in the top bar
+    if st.button("Launch Lab", icon=":material/rocket_launch:", key="lab_open"):
+        st.session_state.view = "lab"
+        st.rerun()
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
