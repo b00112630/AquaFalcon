@@ -7,7 +7,7 @@ from pathlib import Path
 import streamlit.components.v1 as components
 
 _component = components.declare_component("launch_lab", path=str(Path(__file__).parent / "lab_component"))
-VERSION = "3"   # bump after editing lab_component/* so browsers load the new files
+VERSION = "4"   # bump after editing lab_component/* so browsers load the new files
 
 
 def launch_lab(name: str, team: str, defaults: dict, saved: dict | None = None, key: str = "launch_lab"):
