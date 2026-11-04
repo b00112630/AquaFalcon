@@ -132,7 +132,8 @@
       saveLocal();
     }
     clearTimeout(sweepTimer);
-    sweepTimer = setTimeout(function () { sweep = PH.sweepFill(P, goal); drawSweep(); }, first ? 0 : 90);
+    var sbox = $("ch-sweep").parentNode; if (!first) sbox.classList.add("loading");   // skeleton shimmer while it recalculates
+    sweepTimer = setTimeout(function () { sweep = PH.sweepFill(P, goal); drawSweep(); sbox.classList.remove("loading"); }, first ? 0 : 90);
     drawFlightChart();
   }
   function showWarnings() {
@@ -147,12 +148,92 @@
     st.title = res.stable ? "Fins keep it flying nose-first" : "No fins: it tumbles, so drag is much higher";
   }
   function fmt(v, d) { return (Math.round(v * Math.pow(10, d)) / Math.pow(10, d)).toFixed(d); }
+  // ---------------------------------------------------------------- stat numbers (motion: they roll, never jump)
+  // During a flight the numbers follow the rocket every frame. Any other change (new setup, landing, first load)
+  // rolls from the number on screen to the new one in ~0.4 s. Reduced motion = numbers just change.
+  var REDUCED = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var shown = { "s-range": 0, "s-apo": 0, "s-spd": 0, "s-push": 0 }, tw = {}, twRun = false, blend = null;
+  function paintNum(id, v, d, unit) { $(id).innerHTML = fmt(v, d) + "<small>" + unit + "</small>"; }
+  function setNum(id, v, d, unit, animate) {
+    var from = shown[id];
+    if (!animate || REDUCED || from === undefined || Math.abs(from - v) < Math.pow(10, -d) / 2) {
+      delete tw[id]; shown[id] = v; paintNum(id, v, d, unit); return;
+    }
+    tw[id] = { from: from, to: v, d: d, unit: unit, t0: performance.now(), dur: 420 };
+    if (!twRun) { twRun = true; requestAnimationFrame(twStep); }
+  }
+  function twStep(now) {
+    var left = false;
+    Object.keys(tw).forEach(function (id) {
+      var a = tw[id], k = Math.min(1, (now - a.t0) / a.dur), e = 1 - Math.pow(1 - k, 3);
+      shown[id] = a.from + (a.to - a.from) * e; paintNum(id, k < 1 ? shown[id] : a.to, a.d, a.unit);
+      if (k < 1) left = true; else { shown[id] = a.to; delete tw[id]; }
+    });
+    if (left) requestAnimationFrame(twStep); else twRun = false;
+  }
   function showStats(r, live) {
-    var L = live || {};
-    $("s-range").innerHTML = (live ? fmt(L.x, 1) : (r.flew ? fmt(r.range_m, 1) : "0")) + "<small>m</small>";
-    $("s-apo").innerHTML = (live ? fmt(L.apo, 1) : (r.flew ? fmt(r.apogee_m, 1) : "0")) + "<small>m</small>";
-    $("s-spd").innerHTML = (live ? fmt(L.v, 0) : fmt(r.max_speed_ms, 0)) + "<small>m/s</small>";
-    $("s-push").innerHTML = Math.round(r.thrust_s * 1000) + "<small>ms</small>";
+    var L = live || {}, d1 = r.flew ? 1 : 0;
+    if (live) {
+      // first 0.2 s of a launch: glide from the old numbers down to the live ones instead of snapping to 0
+      var k = 1;
+      if (blend) { k = Math.min(1, (performance.now() - blend.t0) / 200); k = 1 - Math.pow(1 - k, 3); if (k >= 1) blend = null; }
+      var mix = function (id, v) { return blend && blend[id] !== undefined ? blend[id] + (v - blend[id]) * k : v; };
+      setNum("s-range", mix("s-range", L.x), 1, "m", false);
+      setNum("s-apo", mix("s-apo", L.apo), 1, "m", false);
+      setNum("s-spd", mix("s-spd", L.v), 0, "m/s", false);
+    } else {
+      setNum("s-range", r.flew ? r.range_m : 0, d1, "m", true);
+      setNum("s-apo", r.flew ? r.apogee_m : 0, d1, "m", true);
+      setNum("s-spd", r.max_speed_ms, 0, "m/s", true);
+    }
+    setNum("s-push", Math.round(r.thrust_s * 1000), 0, "ms", !live);
+  }
+
+  // ---------------------------------------------------------------- the one celebration: a new best distance
+  // The first launch of a visit sets the record (no confetti); beating it fires confetti in the app's water blues.
+  var bestSoFar = null;
+  try { var bs = sessionStorage.getItem("aflab-best"); if (bs !== null) bestSoFar = +bs; } catch (e) {}
+  function checkBest(r) {
+    if (!r.flew) return;
+    var d = r.range_m, beat = bestSoFar !== null && d > bestSoFar + 0.05;
+    if (bestSoFar === null || d > bestSoFar) { bestSoFar = d; try { sessionStorage.setItem("aflab-best", String(d)); } catch (e) {} }
+    if (!beat) return;
+    var b = $("best"); b.textContent = "New best · " + fmt(d, 1) + " m";
+    b.classList.add("on"); clearTimeout(b._t); b._t = setTimeout(function () { b.classList.remove("on"); }, 2600);
+    var s = $("s-range"); s.classList.remove("pop"); void s.offsetWidth; s.classList.add("pop");
+    confetti();
+  }
+  var cf = null;
+  function confetti() {
+    if (REDUCED) return;
+    var c = $("confetti"); c.style.display = "block";
+    var box = c.getBoundingClientRect();
+    c.width = Math.round(box.width * DPR); c.height = Math.round(box.height * DPR);
+    var g = c.getContext("2d"), W2 = box.width, H2 = box.height, cols = ["#1e3a8a", "#2563eb", "#3b82f6", "#38bdf8", "#7dd3fc", "#bfdbfe"], ps = [];
+    for (var i = 0; i < 140; i++) {
+      var left = i % 2 === 0, a = (left ? -1 : -1) * (Math.PI / 2) + (left ? 0.55 : -0.55) + (Math.random() - .5) * 0.7;
+      var sp = 520 + Math.random() * 420;
+      ps.push({ x: left ? 0 : W2, y: H2 * 0.62, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, r: Math.random() * 6.28, vr: (Math.random() - .5) * 14,
+        w: 5 + Math.random() * 5, h: 8 + Math.random() * 7, col: cols[i % cols.length], drop: Math.random() < 0.3 });
+    }
+    var t0 = performance.now(), lastT = t0, DUR = 1900;
+    cf = ps;
+    function step(now) {
+      if (cf !== ps) return;
+      var dt = Math.min(0.033, (now - lastT) / 1000), age = now - t0; lastT = now;
+      g.setTransform(DPR, 0, 0, DPR, 0, 0); g.clearRect(0, 0, W2, H2);
+      var fade = age > DUR - 400 ? Math.max(0, (DUR - age) / 400) : 1;
+      for (var j = 0; j < ps.length; j++) {
+        var p = ps[j];
+        p.vy += 900 * dt; p.vx *= 0.985; p.vy *= 0.985; p.x += p.vx * dt; p.y += p.vy * dt; p.r += p.vr * dt;
+        g.save(); g.globalAlpha = fade; g.translate(p.x, p.y); g.rotate(p.r); g.fillStyle = p.col;
+        if (p.drop) { g.beginPath(); g.arc(0, 0, p.w * 0.55, 0, 6.283); g.fill(); }      // water droplets
+        else g.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * Math.abs(Math.cos(p.r * 0.7)) + 1);  // paper that flips as it falls
+        g.restore();
+      }
+      if (age < DUR) requestAnimationFrame(step); else { g.clearRect(0, 0, W2, H2); c.style.display = "none"; cf = null; }
+    }
+    requestAnimationFrame(step);
   }
 
   // ---------------------------------------------------------------- flight playback
@@ -160,6 +241,7 @@
     if (!res) return;
     if (fly && fly.done && res) ghost = { samples: res.samples, flew: res.flew };
     fly = { res: res, t: 0, i: 0, done: false, apo: 0, landedAt: 0 };
+    blend = REDUCED ? null : { t0: performance.now(), "s-range": shown["s-range"], "s-apo": shown["s-apo"], "s-spd": shown["s-spd"] };
     parts = [];
     $("go").classList.add("flying"); $("go-label").textContent = res.flew ? "Flying…" : "Launch";
     if (!res.flew) { fly.done = true; $("go").classList.remove("flying"); puff(); }
@@ -420,6 +502,7 @@
           splash(sx(r.range_m), H - GROUND);
           $("go").classList.remove("flying"); $("go-label").textContent = "Launch again";
           showStats(r, null);
+          checkBest(r);
         }
       }
       now = sampleAt(r, fly.t);
@@ -546,8 +629,9 @@
   }
 })();
 
-// hide the loading screen once the Lab has drawn its first frame
+// swap the skeleton for the Lab once it has drawn its first frame
 (function () { function done() { var b = document.getElementById("boot"); if (!b) return;
-  b.style.opacity = "0"; setTimeout(function () { if (b.parentNode) b.parentNode.removeChild(b); }, 320); }
+  document.body.classList.add("ready");      // cards fade + slide in (lab.css)
+  b.style.opacity = "0"; setTimeout(function () { if (b.parentNode) b.parentNode.removeChild(b); }, 220); }
   if (document.readyState === "complete") requestAnimationFrame(done); else window.addEventListener("load", function () { requestAnimationFrame(done); });
   setTimeout(done, 2500); })();
