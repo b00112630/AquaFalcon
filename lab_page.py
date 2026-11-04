@@ -58,11 +58,22 @@ footer, #MainMenu, [data-testid="stSidebar"], [data-testid="stSidebarCollapsedCo
   margin-right: 5px; vertical-align: 1px; }
 @media (min-width: 1100px) { .topbar .title { font-size: 16px; } }
 iframe { color-scheme: light; }
-/* smooth hand-off from the chat: hide the old page instead of showing it frozen, fade the Lab in, spinner until it paints */
+/* smooth hand-off from the chat: hide the old page instead of showing it frozen, fade the Lab in (0.2 s); the Lab draws its own skeleton until it paints */
 [data-stale="true"] { opacity: 0 !important; transition: none !important; }
-iframe[title*="launch_lab"] { min-height: 78vh; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='16' fill='none' stroke='%23e5e7eb' stroke-width='4'/%3E%3Cpath d='M20 4a16 16 0 0 1 16 16' fill='none' stroke='%231e3a8a' stroke-width='4' stroke-linecap='round'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 20 20' to='360 20 20' dur='.8s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E") center 120px / 38px no-repeat;
-  animation: labin .35s ease both; }
+iframe[title*="launch_lab"] { min-height: 78vh; background: transparent;
+  animation: labin .2s cubic-bezier(.2,.7,.2,1) both; }
 @keyframes labin { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+/* motion: the same slow water-light background as the chat page (transform-only = cheap), off for reduced motion */
+.stApp { isolation: isolate; }
+.stApp::before { content: ""; position: fixed; inset: -25%; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(38% 30% at 18% 18%, rgba(125,211,252,.20), transparent 70%),
+    radial-gradient(42% 34% at 86% 38%, rgba(59,130,246,.10), transparent 72%),
+    radial-gradient(46% 36% at 36% 86%, rgba(147,197,253,.16), transparent 72%);
+  animation: af-drift 26s ease-in-out infinite alternate; will-change: transform; }
+@keyframes af-drift { from { transform: translate3d(-3%, -2%, 0) rotate(0deg); }
+  to { transform: translate3d(3%, 2.5%, 0) rotate(4deg); } }
+@media (prefers-reduced-motion: reduce) { .stApp::before, iframe[title*="launch_lab"] { animation: none !important; } }
 
 /* the style + top-bar blocks take no room, so no gap above the Lab */
 [data-testid="stMainBlockContainer"] > [data-testid="stVerticalBlock"],
