@@ -261,6 +261,56 @@ button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
   .st-key-chips-wrap button p { font-size: 13px !important; white-space: normal; line-height: 1.25; }
   [data-testid="stBottomBlockContainer"] { padding: 10px .9rem 20px !important; }
 }
+/* ---------------- MOTION (premium polish) ----------------
+   Rules: things that change move instead of jumping, every animation ~0.2 s, skeletons instead of spinners,
+   a slow water-light background, buttons press in (scale .97), messages fade + slide in.
+   Everything here switches off for people who ask their phone/computer for reduced motion (bottom of this block). */
+:root { --af-ease: cubic-bezier(.2,.7,.2,1); --af-fast: .2s; }
+/* slow-moving water light behind the page (transform-only animation = cheap; sits under everything) */
+.stApp { isolation: isolate; }
+.stApp::before { content: ""; position: fixed; inset: -25%; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(38% 30% at 18% 18%, rgba(125,211,252,.20), transparent 70%),
+    radial-gradient(42% 34% at 86% 38%, rgba(59,130,246,.10), transparent 72%),
+    radial-gradient(46% 36% at 36% 86%, rgba(147,197,253,.16), transparent 72%);
+  animation: af-drift 26s ease-in-out infinite alternate; will-change: transform; }
+@keyframes af-drift { from { transform: translate3d(-3%, -2%, 0) rotate(0deg); }
+  to { transform: translate3d(3%, 2.5%, 0) rotate(4deg); } }
+@keyframes af-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes af-fade { from { opacity: 0; } to { opacity: 1; } }
+/* messages, welcome and chips fade + slide in instead of popping */
+[class*="st-key-umsg"], [class*="st-key-row"], .welcome, .st-key-chips-wrap, .st-key-chips-row {
+  animation: af-in var(--af-fast) var(--af-ease) both; }
+/* buttons + chips: smooth hover, shrink slightly when pressed */
+[class*="st-key-chips"] button, .st-key-settings button, .st-key-lablink button, [data-testid="stChatInputSubmitButton"],
+#afv-launch, .afv-btn { transition: transform .12s var(--af-ease), background-color var(--af-fast) ease,
+  border-color var(--af-fast) ease, color var(--af-fast) ease, box-shadow var(--af-fast) ease, filter var(--af-fast) ease !important; }
+[class*="st-key-chips"] button:active, .st-key-settings button:active, .st-key-lablink button:active,
+[data-testid="stChatInputSubmitButton"]:active, #afv-launch:active, .afv-btn:active { transform: scale(.97) !important; }
+[data-testid="stChatInput"] { transition: border-color var(--af-fast) ease, box-shadow var(--af-fast) ease; }
+/* bottom bar: frosted like the top bar, so the moving background doesn't stop at a hard white edge */
+[data-testid="stBottom"] > div, [data-testid="stBottomBlockContainer"] { background: rgba(255,255,255,.86) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(14px); backdrop-filter: saturate(180%) blur(14px); }
+[data-testid="stBottomBlockContainer"] { background: transparent !important; -webkit-backdrop-filter: none; backdrop-filter: none; }
+/* "thinking" skeleton (replaces the bouncing dots): soft pulsing lines the size of a short answer */
+.skel { display: flex; flex-direction: column; gap: 9px; padding: 5px 0 4px; width: min(240px, 58vw); }
+.skel i { display: block; height: 10px; border-radius: 99px; background: linear-gradient(90deg, #d5dce6 0%, #e9edf3 45%, #d5dce6 90%);
+  background-size: 220% 100%; animation: af-shimmer 1.2s linear infinite, af-pulse 1.2s ease-in-out infinite; }
+.skel i:nth-child(1) { width: 92%; } .skel i:nth-child(2) { width: 100%; } .skel i:nth-child(3) { width: 58%; }
+@keyframes af-shimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
+@keyframes af-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+/* Streamlit's own spinner (e.g. "Listening...") becomes a pulsing pill instead of a spinning wheel */
+[data-testid="stSpinner"] { animation: af-pulse 1.2s ease-in-out infinite; }
+[data-testid="stSpinnerIcon"] { border: 0 !important; width: 34px !important; height: 10px !important; border-radius: 99px !important;
+  background: linear-gradient(90deg, #e2e8f0 0%, #f1f5f9 45%, #e2e8f0 90%) !important; background-size: 220% 100% !important;
+  animation: af-shimmer 1.2s linear infinite !important; }
+/* reduced motion: no background drift, no slides, no shimmer - things simply appear */
+@media (prefers-reduced-motion: reduce) {
+  .stApp::before { animation: none !important; }
+  .stApp *, .stApp *::before, .stApp *::after, #afv-launch, .afv-btn {
+    animation-duration: .001ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important; }
+}
 </style>""", unsafe_allow_html=True)
 
 # ---------------- top bar ----------------
@@ -279,12 +329,52 @@ if "messages" not in st.session_state:
 read_aloud = False
 bot = RocketBot(backend=None)
 
+# ---------------- motion helper (invisible) ----------------
+# Rolls the welcome numbers (46 cm, 500 mL, ...) up from 0 the first time they appear. Runs in the page itself;
+# does nothing for people who ask for reduced motion.
+MOTION_JS = """<script>
+(function () {
+  var W = window.parent, D;
+  try { D = W.document; } catch (e) { return; }
+  if (W.__afMotionObs) { try { W.__afMotionObs.disconnect(); } catch (e) {} }
+  var reduce = W.matchMedia && W.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function roll(el) {
+    var txt = el.textContent, m = txt.match(/^(\\D*)(\\d+(?:\\.\\d+)?)(.*)$/);
+    if (!m) return;
+    var to = parseFloat(m[2]), dec = (m[2].split(".")[1] || "").length, t0 = null, dur = 450;
+    function step(ts) {
+      if (t0 === null) t0 = ts;
+      var k = Math.min(1, (ts - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = k < 1 ? m[1] + (to * e).toFixed(dec) + m[3] : txt;
+      if (k < 1) W.requestAnimationFrame(step);
+    }
+    W.requestAnimationFrame(step);
+  }
+  var queued = false;
+  function scan() {
+    queued = false;
+    if (W.__afSpecsRolled) return;
+    var els = D.querySelectorAll(".welcome .specs b");
+    if (!els.length) return;
+    W.__afSpecsRolled = true;                 // once per visit
+    if (!reduce) Array.prototype.forEach.call(els, roll);
+    if (W.__afMotionObs) W.__afMotionObs.disconnect();
+  }
+  scan();
+  if (!W.__afSpecsRolled && W.MutationObserver) {
+    W.__afMotionObs = new W.MutationObserver(function () { if (!queued) { queued = true; W.requestAnimationFrame(scan); } });
+    W.__afMotionObs.observe(D.body, { childList: true, subtree: true });
+  }
+})();
+</script>"""
+
 # ---------------- voice mode bridge (invisible; see voice_mode.py) ----------------
 # The water-drop button next to the chat box opens a full-screen, hands-free voice conversation.
 with st.container(key="voicebridge"):
     voice_slot = st.empty()        # hidden box the voice screen reads the streaming answer from
     voice_q = voice_mode(NAME, team=R.get("team_name", ""), can_transcribe=bool(os.getenv("GROQ_API_KEY", "").strip()
                                                     or os.getenv("GEMINI_API_KEY", "").strip()))
+    components.html(MOTION_JS, height=0)   # motion helper (see MOTION_JS above)
 voice_slot.markdown(stream_html(st.session_state.get("voice_last")), unsafe_allow_html=True)
 
 
@@ -340,6 +430,9 @@ def speak_button(text: str, autoplay: bool, meta: str = ""):
         color:#475569; font: 500 12px 'Inter',-apple-system,BlinkMacSystemFont,sans-serif; padding:4px 6px;
         border-radius:8px; cursor:pointer; }}
       button:hover {{ background:#f1f5f9; color:#1e3a8a; }}
+      button {{ transition: background-color .2s ease, color .2s ease, transform .12s ease; }}
+      button:active {{ transform: scale(.97); }}
+      @media (prefers-reduced-motion: reduce) {{ button {{ transition: none; }} }}
       svg {{ width:14px; height:14px; }}
       .row {{ display:flex; align-items:center; gap:4px; padding-left:8px; }}
       .meta {{ font: 400 12px 'Inter',-apple-system,BlinkMacSystemFont,sans-serif; color:#94a3b8; }}
@@ -498,7 +591,8 @@ if question:
         with st.container(key=f"row{n + 1}"):
             with st.container(key=f"bmsg{n + 1}"):
                 box = st.empty()
-                box.markdown('<div class="typing"><i></i><i></i><i></i></div>', unsafe_allow_html=True)
+                box.markdown('<div class="skel" role="status" aria-label="Thinking"><i></i><i></i><i></i></div>',
+                            unsafe_allow_html=True)   # skeleton lines while the answer is thought up
                 pieces = bot.stream(question, msgs, voice=bool(voice_id))
                 voicer = None
                 if voice_id and voice_q.get("server_tts"):   # iPhone whose browser voice is silent
