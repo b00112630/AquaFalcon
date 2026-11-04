@@ -2,10 +2,9 @@
   /* the chat page's own values (app.py STYLE block + .streamlit/config.toml) */
   --accent: #1e3a8a; --accent-soft: #eef2fb; --ink: #0f172a; --muted: #64748b; --line: #e5e7eb;
   --soft: #f8fafc; --chip-ink: #334155; --water: #3b82f6; --water2: #7dd3fc; --good: #16a34a; --warn: #b45309;
-  --ease: cubic-bezier(.2,.7,.2,1);   /* motion: one easing for everything, ~0.2 s */
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { margin: 0; padding: 0; background: transparent; color: var(--ink);   /* transparent: the page's slow water-light background shows around the cards */
+html, body { margin: 0; padding: 0; background: #ffffff; color: var(--ink);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; -webkit-font-smoothing: antialiased; }
 button { font-family: inherit; cursor: pointer; }
 .lab { padding: 2px 2px 8px; }
@@ -14,7 +13,7 @@ button { font-family: inherit; cursor: pointer; }
 .top { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
 .back, .ghost { display: inline-flex; align-items: center; gap: 4px; height: 36px; border-radius: 999px;
   border: 1px solid var(--line); background: #fff; color: var(--ink); font-size: 13px; font-weight: 500;
-  white-space: nowrap; box-shadow: 0 1px 2px rgba(15,23,42,.04); transition: all .2s var(--ease), transform .12s var(--ease); }
+  white-space: nowrap; box-shadow: 0 1px 2px rgba(15,23,42,.04); transition: all .15s ease; }
 .back { padding: 0 14px 0 9px; }
 .back svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .ghost { padding: 0 14px; color: var(--accent); font-weight: 600; }
@@ -36,13 +35,13 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 /* stage */
-.stage { padding: 8px; overflow: hidden; position: relative; }
+.stage { padding: 8px; overflow: hidden; }
 .canvas-wrap { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid #eef1f5; }
 #sky { display: block; width: 100%; height: 300px; touch-action: manipulation; }
 @media (min-width: 860px) { #sky { height: 400px; } }
 .badge { position: absolute; top: 10px; right: 10px; padding: 5px 11px; border-radius: 999px; font-size: 11px; font-weight: 600;
   letter-spacing: .08em; text-transform: uppercase; color: #fff; background: var(--accent);
-  box-shadow: 0 4px 14px rgba(30,58,138,.18); opacity: 0; transform: translateY(-4px); transition: all .2s var(--ease); pointer-events: none; }
+  box-shadow: 0 4px 14px rgba(30,58,138,.18); opacity: 0; transform: translateY(-4px); transition: all .25s ease; pointer-events: none; }
 .badge.on { opacity: 1; transform: none; }
 .badge.warn { top: auto; bottom: 46px; left: 10px; right: auto; background: #fffbeb; color: var(--warn); border: 1px solid #fde68a;
   letter-spacing: .01em; text-transform: none; font-weight: 500; font-size: 12px; box-shadow: 0 1px 2px rgba(15,23,42,.05); }
@@ -60,10 +59,10 @@ button { font-family: inherit; cursor: pointer; }
 .go-row { display: flex; align-items: center; gap: 10px; margin: 10px 2px 2px; }
 .go { flex: 1; height: 52px; border: 0; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; gap: 9px;
   color: #fff; font-size: 16px; font-weight: 600; letter-spacing: -.005em; background: var(--accent);
-  box-shadow: 0 1px 2px rgba(15,23,42,.08), 0 4px 14px rgba(30,58,138,.16); transition: transform .12s var(--ease), background .2s ease, box-shadow .2s ease; }
+  box-shadow: 0 1px 2px rgba(15,23,42,.08), 0 4px 14px rgba(30,58,138,.16); transition: transform .12s ease, background .2s; }
 .go svg { width: 21px; height: 21px; fill: #fff; }
 .go:hover { background: #1b347c; }
-.go:active { transform: scale(.97); }
+.go:active { transform: scale(.98); }
 .go.flying { background: #64748b; box-shadow: none; }
 .chip-stab { flex: none; font-size: 13px; font-weight: 500; padding: 7px 13px; border-radius: 999px; white-space: nowrap;
   background: #fff; border: 1px solid var(--line); box-shadow: 0 1px 2px rgba(15,23,42,.04); }
@@ -100,7 +99,7 @@ input[type=range]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px rg
 .seg { display: flex; flex-wrap: nowrap; gap: 6px; }
 .seg button { flex: 1 1 auto; min-width: 0; height: 34px; border: 1px solid var(--line); border-radius: 999px; background: #fff;
   color: var(--chip-ink); font-size: 13px; font-weight: 500; white-space: nowrap; padding: 0 6px; overflow: hidden; text-overflow: ellipsis;
-  box-shadow: 0 1px 2px rgba(15,23,42,.04); transition: all .2s var(--ease), transform .12s var(--ease); }
+  box-shadow: 0 1px 2px rgba(15,23,42,.04); transition: all .15s ease; }
 .seg button:hover { border-color: #c7d2fe; }
 .seg button.on { border-color: #c7d2fe; background: var(--accent-soft); color: var(--accent); font-weight: 600; }
 .seg.mini { flex-wrap: nowrap; gap: 4px; }
@@ -125,58 +124,8 @@ input[type=range]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px rg
 .ask small { display: block; font-size: 13px; color: var(--muted); margin-top: 3px; line-height: 1.45; }
 .askb { height: 48px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--accent);
   font-size: 15px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 9px;
-  box-shadow: 0 1px 2px rgba(15,23,42,.04); transition: all .2s var(--ease), transform .12s var(--ease); }
+  box-shadow: 0 1px 2px rgba(15,23,42,.04); transition: all .15s ease; }
 .askb svg { width: 19px; height: 19px; fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; }
 .askb:hover { border-color: #c7d2fe; background: var(--accent-soft); }
 .note { font-size: 11.5px; color: #94a3b8; line-height: 1.5; margin: 12px 4px 0; text-align: center; }
 button:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
-
-/* ---------------------------------------------------------------- motion (premium polish)
-   ~0.2 s everywhere, buttons press in, cards fade + slide in, skeleton while loading, one celebration
-   (confetti on a new best distance). All of it switches off under prefers-reduced-motion (bottom). */
-.back:active, .ghost:active:not(:disabled), .seg button:active, .askb:active { transform: scale(.97); }
-/* 36 px pills keep their look but get an invisible 44 px tap area (phone touch-target rule) */
-.back, .ghost { position: relative; }
-.back::after, .ghost::after { content: ""; position: absolute; inset: -4px -2px; }
-/* the Lab stays invisible under the skeleton until its first frame, then the cards fade + slide in */
-.lab { opacity: 0; }
-body.ready .lab { opacity: 1; transition: opacity .2s var(--ease); }
-body.ready .top, body.ready .card, body.ready .note { animation: af-in .2s var(--ease) both; }
-body.ready .panel { animation-delay: .04s; } body.ready .charts { animation-delay: .08s; } body.ready .ask { animation-delay: .1s; }
-@keyframes af-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-/* skeleton page */
-.skel-page { position: fixed; inset: 0; z-index: 50; padding: 2px 2px 8px; transition: opacity .2s var(--ease); pointer-events: none; }
-.sk { display: block; border-radius: 10px; background: linear-gradient(90deg, #e8edf4 0%, #f3f6fa 45%, #e8edf4 90%);
-  background-size: 220% 100%; animation: af-shimmer 1.2s linear infinite, af-pulse 1.2s ease-in-out infinite; }
-@keyframes af-shimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
-@keyframes af-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .6; } }
-.sk-top { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
-.sk.pill { width: 78px; height: 36px; border-radius: 999px; } .sk.pill.wide { width: 112px; }
-.sk.ttl-sk { flex: 1; height: 34px; max-width: 220px; margin-right: auto; }
-.sk-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-.sk-card { background: rgba(255,255,255,.75); border: 1px solid var(--line); border-radius: 14px; padding: 8px; }
-.sk.sky { height: 300px; }
-.sk-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
-.sk-stats .sk { height: 52px; }
-.sk.go-sk { height: 52px; border-radius: 999px; margin: 10px 2px 2px; }
-.sk-panel { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
-.sk.line { height: 30px; } .sk.line.s { width: 30%; height: 14px; } .sk.line.m { width: 70%; }
-@media (min-width: 860px) { .sk-grid { grid-template-columns: minmax(0, 1.65fr) minmax(300px, 1fr); align-items: start; } .sk.sky { height: 400px; } }
-@media (max-width: 420px) { .sk-stats { grid-template-columns: repeat(2, 1fr); } }
-/* "computing" skeleton on the best-water chart while it is being recalculated (only shows if it takes a moment) */
-.chart-box { position: relative; }
-.chart-box::after { content: ""; position: absolute; left: 0; right: 0; top: 36px; bottom: 36px; border-radius: 10px; pointer-events: none;
-  background: linear-gradient(90deg, rgba(232,237,244,0) 0%, rgba(232,237,244,.85) 45%, rgba(232,237,244,0) 90%);
-  background-size: 220% 100%; opacity: 0; transition: opacity .2s var(--ease); }
-.chart-box.loading::after { opacity: 1; transition-delay: .12s; animation: af-shimmer 1.2s linear infinite; }
-/* the one celebration: new best distance -> confetti in the app's water blues + a badge */
-#confetti { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 6; pointer-events: none; display: none; }
-.badge.best { transform: translateY(-4px) scale(.96);   /* same corner as the slow-mo badge (that one is off after landing) */
-  background: linear-gradient(135deg, #1e3a8a, #2563eb 60%, #38bdf8); letter-spacing: .06em; white-space: nowrap; }
-.badge.best.on { transform: none; }
-.stat b.pop { animation: af-pop .2s var(--ease); }
-@keyframes af-pop { 0% { transform: scale(1); } 50% { transform: scale(1.06); color: var(--accent); } 100% { transform: scale(1); } }
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important;
-    animation-delay: 0s !important; transition-duration: .001ms !important; transition-delay: 0s !important; }
-}
