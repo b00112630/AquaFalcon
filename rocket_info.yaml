@@ -10,92 +10,94 @@
 # =====================================================================
 
 rocket:
-  name: "AquaFalcon"                      # EXAMPLE  <- your rocket's name = the chatbot's name
+  name: "AquaFalcon" # EXAMPLE  <- your rocket's name = the chatbot's name
   emoji: "🚀"
-  tagline: "Small bottle, big dreams."     # EXAMPLE
-  team_name: "Team 7"                     # EXAMPLE
+  tagline: "Small bottle, big dreams." # EXAMPLE
+  team_name: "Team " # EXAMPLE
   course: "NGN110 - Introduction to Engineering and Computing, AUS, Fall 2026, Section 20"
 
-team_members:                             # EXAMPLE - replace with your real team
-  - name: "Nabil"
-    role: "Chatbot developer and launch-day pump operator"
-  - name: "Teammate 2"
-    role: "Fins and stability design (CG/CP)"
-  - name: "Teammate 3"
-    role: "Nose cone and materials"
-  - name: "Teammate 4"
-    role: "Testing, data logging and safety officer"
+team_members: # EXAMPLE - replace with your real team
+  - name: "Nabil Joudeh"
+    role: "Chatbot developer"
+  - name: "Mohammad Yusuf"
+    role: "Project Planner"
+  - name: "Mohammad Alawadhi"
+    role: "Researcher"
+  - name: "Adel Atatreh"
+    role: "Rocket Builder"
 
 design:
-  bottle: "1.5 L PET water bottle (one bottle, no joins)"          # EXAMPLE
-  total_length_cm: 46                     # EXAMPLE  (competition rule: must be under 50 cm)
-  dry_mass_g: 115                         # EXAMPLE  (mass without water)
-  nose_cone: "Cone cut from the top of a second bottle, lined with cardboard, with 20 g of modelling clay in the tip to move the centre of gravity forward"  # EXAMPLE
-  fins: "3 trapezoid fins cut from an old plastic folder, spaced 120 degrees apart near the nozzle end"  # EXAMPLE
-  fin_size: "8 cm root, 4 cm tip, 6 cm span"   # EXAMPLE
-  stability: "Centre of gravity is about 1.5 body diameters ahead of the centre of pressure (checked with the string swing test)"  # EXAMPLE
-  launcher: "Competition launch pad with an electric pump provided on the day; a bike pump with a pressure gauge for our own tests"
-  why_this_design: "We kept it short and light to stay under the 50 cm limit, put weight in the nose for stability, and used three fins because they gave the same stability as four with less drag and less material"  # EXAMPLE
+  bottle: "One completely uncut, intact 2.25 L PET soft-drink bottle (~36 cm). Keeping the pressure vessel uncut preserves burst strength and prevents structural failure under high pump pressure."
+  total_length_cm: 47.5 # 47-48 cm measured from nozzle to nose tip (strictly under the 50 cm competition rule)
+  dry_mass_g: "Not explicitly logged (includes the intact 2.25 L PET bottle, ~18 cm PET nose sleeve, ~40 g JOVI air-dry clay ballast, 4 cardboard fins, and waterproof packaging tape)"
+  nose_cone: "An ~18 cm top section cut from a donor PET bottle, fitted over the top dome of the main bottle like a sleeve and secured with waterproof packaging tape."
+  fins: "4 triangular fins cut from scrap corrugated cardboard, spaced 90 degrees apart near the nozzle end."
+  fin_size: "9 cm root chord x 5 cm height"
+  stability: "Centre of Gravity (CG) is positioned ahead of the Centre of Pressure (CP) using ~40 g of clay ballast in the nose tip and 4 tail fins near the nozzle, preventing mid-air tumbling."
+  launcher: "Official NGN 110 angled base launcher with an electric air pump."
+  why_this_design: "We left the main 2.25 L bottle uncut to preserve pressure integrity, slid an ~18 cm PET sleeve over the dome to stay within the 47-48 cm total length limit (under 50 cm), packed ~40 g of clay into the nose tip to shift CG forward, and reinforced 4 corrugated cardboard fins with waterproof tape 'L-bracket' fillets, leading-edge caps, and a circumferential locking band to eliminate drag and prevent fin shear on launch."
 
-materials:                                # EXAMPLE
-  - "1.5 L PET bottle (rocket body / pressure chamber)"
-  - "Second PET bottle top (nose cone)"
-  - "Recycled plastic folder (fins)"
-  - "Cardboard (nose cone lining)"
-  - "Modelling clay (nose weight)"
-  - "Duct tape and hot glue"
+materials:
+  - "2.25 L PET soft-drink bottle (uncut main body / pressure vessel)"
+  - "Donor PET bottle top section (~18 cm sleeved nose cone)"
+  - "JOVI air-dry clay (~40 g nose ballast, within 30-50 g range)"
+  - "Scrap corrugated cardboard (4 triangular stabilizing fins)"
+  - "Waterproof plastic packaging tape (nose attachment, 'L-bracket' fin fillets, leading-edge caps, and circumferential base locking band)"
 
 launch:
-  water_volume_ml: 500                    # EXAMPLE  (about 1/3 of the bottle)
-  water_fraction: "about one third of the bottle"   # EXAMPLE
-  launch_pressure_psi: 60                 # EXAMPLE
-  launch_pressure_note: "This is the pressure from our OWN test launches (bike pump with a gauge). On competition day the organisers' electric pump sets the pressure, and we don't know that value yet"
-  max_safe_pressure_psi: "unknown - we did not measure the bottle's burst limit; 60 psi is only our TEST pressure"
-  launch_angle_deg: 45                    # EXAMPLE
-  best_water_volume_reason: "Too little water = thrust ends too soon; too much water = less room for compressed air and a heavier rocket. Our tests showed about 1/3 full went furthest."  # EXAMPLE
+  water_volume_ml: 750 # 0.75 L water + 1.50 L compressed air
+  water_fraction: "33% (one-third of the 2.25 L total bottle volume)"
+  launch_pressure_psi: "Pressurized via the official competition electric air pump (exact PSI regulated by the competition launcher)"
+  launch_pressure_note: "Launched on the official NGN 110 angled base launcher and electric air pump, achieving an official horizontal distance of 58.5 meters (nearly 10x the 6.0 m qualifying minimum) with straight stability and zero post-flight damage."
+  max_safe_pressure_psi: "Preserved at maximum factory rating by keeping the 2.25 L PET pressure vessel completely uncut and inspecting for cracks, whitening, or deformation before every launch (retiring bottles after 10-15 launches)."
+  launch_angle_deg: "Set by the official NGN 110 angled base launcher to optimize horizontal range."
+  best_water_volume_reason: "750 mL (~33% volume) balances reaction mass and compressed air energy: too little water exhausts thrust prematurely, while too much water adds dead weight and leaves insufficient compressed air volume (1.50 L) to expel the propellant efficiently."
 
-# One line per test launch.  Add your own rows!                       # EXAMPLE DATA
-# (add  date: "2026-10-20"  to a row only once that launch has really happened)
+# Verified competition & design log (populated with official team specifications)
 test_results:
-  - {test: 1, water_ml: 300, pressure_psi: 40, angle_deg: 45, distance_m: 9.5,  notes: "Wobbly flight, nose too light"}
-  - {test: 2, water_ml: 500, pressure_psi: 40, angle_deg: 45, distance_m: 14.0, notes: "Added 20 g clay to nose - much straighter"}
-  - {test: 3, water_ml: 500, pressure_psi: 60, angle_deg: 45, distance_m: 22.5, notes: "Best flight so far"}
-  - {test: 4, water_ml: 700, pressure_psi: 60, angle_deg: 45, distance_m: 17.0, notes: "Too much water, heavier and less air"}
-  - {test: 5, water_ml: 500, pressure_psi: 60, angle_deg: 45, distance_m: 21.8, notes: "Repeat of test 3 - consistent"}
+  - {
+      test: 1,
+      date: "2026-11-15",
+      water_ml: 750,
+      pressure_psi: "Official NGN 110 electric air pump",
+      angle_deg: "Official NGN 110 angled base launcher",
+      distance_m: 58.5,
+      notes: "Official competition launch: 750 mL water (~33% of 2.25 L), ~40 g JOVI clay nose ballast, 4 tape-reinforced cardboard fins. Straight flight stability and zero post-flight damage.",
+    }
 
 best_result:
-  distance_m: 22.5                        # EXAMPLE
-  settings: "500 mL water, 60 psi, 45 degrees (test 3)"   # EXAMPLE
-  max_height_m: unknown                   # we did not measure height (the bot will say so, not guess)
+  distance_m: 58.5
+  settings: "750 mL water (0.75 L) + 1.50 L compressed air, official NGN 110 angled base launcher and electric air pump"
+  max_height_m: unknown # Height was not directly measured; horizontal distance was officially recorded at 58.5 m
 
 competition:
   date: "Sunday 15 November 2026"
-  result_distance_m: unknown              # fill in after the competition!
-  placement: unknown                      # fill in after the competition!
-  minimum_distance_m: 6                   # from the brief: must fly at least 6 m
+  result_distance_m: 58.5
+  placement: unknown # Official ranking not recorded in team logs; achieved nearly 10x the 6.0 m qualifying minimum
+  minimum_distance_m: 6.0
 
-safety:                                   # from the brief + EXAMPLE team rules
-  - "Everyone stays at least 4.6 m (15 ft) away from the launch pad"
-  - "Safety goggles on for anyone near the launcher"
-  - "Clear countdown before every launch, and nobody downrange"
-  - "Only pressurise the bottle once everyone is behind the line"
-  - "Never use damaged or dented bottles; we retire a bottle after 10-15 launches"
-  - "We never go above the bottle's safe pressure and always use a gauge"
-  - "Never stand over the rocket or approach it while it is pressurised"
+safety:
+  - "Mandatory safety goggles for anyone near the launch area"
+  - "Minimum 15 ft (4.6 m) safety distance behind the barrier for all personnel"
+  - "Clear, audible countdown before every launch with the downrange zone completely clear"
+  - "Never approach or stand over a pressurized bottle"
+  - "Inspect PET bottles before every launch for cracks, stress whitening, or deformation"
+  - "Retire PET pressure vessels after 10-15 launches to prevent material fatigue failure"
 
-sustainability:                           # EXAMPLE - replace with your real choices
-  - "Body and nose cone are reused water bottles - no new plastic bought"
-  - "Fins are cut from an old plastic folder"
-  - "The rocket is powered by water and air only - no fuel, no combustion, no emissions"
-  - "Test water was collected from the landing area and reused for watering plants"
-  - "After the project the bottles go into the AUS recycling bins"
+sustainability:
+  - "Main pressure vessel and sleeved nose cone are upcycled from post-consumer 2.25 L PET soft-drink bottles"
+  - "All four stabilizing fins are cut from scrap corrugated cardboard"
+  - "Zero chemical propellants, combustion, or toxic emissions-powered strictly by tap water and compressed air"
+  - "Reusable, intact airframe survived its 58.5 m flight with zero structural damage, eliminating single-use waste"
 
-faq:                                      # EXAMPLE - add questions you expect the audience to ask
-  - q: "Why did you choose 3 fins instead of 4?"
-    a: "Three fins gave the same stability in our swing test, with less drag and less material."
-  - q: "What was the hardest part?"
-    a: "Getting the rocket stable - the first launch wobbled until we added weight to the nose."
-  - q: "What would you improve?"
-    a: "A smoother, more pointed nose cone to cut drag, and more tests at different angles."
-  - q: "Can the rocket explode?"
-    a: "A PET bottle can burst if over-pressurised or damaged, which is why we use a gauge, stay 4.6 m away and retire old bottles."
+faq:
+  - q: "Why didn't you cut the main bottle to make it shorter?"
+    a: "Cutting the main 2.25 L PET bottle destroys its structural integrity and pressure rating. Instead, we kept the 36 cm pressure vessel completely intact and slid an ~18 cm donor PET bottle top over the dome like a sleeve, keeping our total length at 47-48 cm (strictly under the 50 cm limit) without compromising burst strength."
+  - q: "Why did you use 750 mL of water instead of filling it halfway?"
+    a: "750 mL is ~33% of our 2.25 L bottle, leaving 1.50 L for compressed air. Too little water exhausts thrust too quickly, while too much water adds heavy dead mass and leaves too little compressed air volume to expel the water efficiently."
+  - q: "How did you prevent the cardboard fins from tearing or bending during launch?"
+    a: "We tack-aligned the four 9 cm * 5 cm triangular fins at 90 degrees intervals, then reinforced both sides of every fin with waterproof plastic packaging tape 'L-bracket' fillets, wrapped leading-edge tape caps to cut drag and moisture, and secured the roots with a circumferential base locking band."
+  - q: "Why did you put clay inside the nose cone?"
+    a: "Packing ~40 g of JOVI air-dry clay tightly into the nose tip shifts the Center of Gravity (CG) forward while our four tail fins pull the Center of Pressure (CP) rearward. Keeping CG ahead of CP ensures aerodynamic stability and prevents mid-air tumbling."
+  - q: "Can the rocket burst under pressure?"
+    a: "A damaged or fatigued PET bottle can rupture if over-pressurized. We mitigate this by never cutting the pressure vessel, inspecting for stress whitening or dents before every launch, retiring bottles after 10-15 launches, wearing goggles, and keeping everyone at least 15 ft (4.6 m) behind the safety barrier."
