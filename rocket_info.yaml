@@ -47,7 +47,7 @@ materials:
 launch:
   water_volume_ml: 750 # 0.75 L water + 1.50 L compressed air
   water_fraction: "33% (one-third of the 2.25 L total bottle volume)"
-  launch_pressure_psi: "Pressurized via the official competition electric air pump"
+  launch_pressure_psi: "Official competition electric air pump"
   launch_pressure_note: "Launched on the official NGN 110 angled base launcher and electric air pump, achieving an official horizontal distance of 58.5 meters (nearly 10x the 6.0 m qualifying minimum) with straight stability and zero post-flight damage."
   max_safe_pressure_psi: "Preserved at maximum factory rating by keeping the 2.25 L PET pressure vessel completely uncut and inspecting for cracks, whitening, or deformation before every launch (retiring bottles after 10-15 launches)."
   launch_angle_deg: "Set by the official NGN 110 angled base launcher to optimize horizontal range."
